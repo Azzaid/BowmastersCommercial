@@ -5,14 +5,21 @@
 var loadState = {
   preload:function ()
   {
-    loadBar = this.load.image('progressBar', '../assets/UI/logo.png');
+    var logo = this.add.sprite(100, 100, 'logo');
+    var loadBar = this.load.image('progressBar', '../assets/UI/logo.png');
     loadBar.anchor(0.5,0.5);
-    this.load.setPreloadSprite(loadBar);
-    this.load.state('gameScreen', 'gameScreen');
+    game.load.setPreloadSprite(loadBar);
+
+
+    game.add.plugin(PhaserSpine.SpinePlugin);
+    game.load.spine('Thor', '../assets/Character');
+
+
+    this.load.state('gameScreen', gameScreen);
     console.log("loaded loader");
   },
   create: function  ()
   {
-    this.state.start('gameScreen')
+    //this.state.start('gameScreen')
   }
 };
