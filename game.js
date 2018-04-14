@@ -23,7 +23,7 @@ var game = new Phaser.Game(config);
 function preload ()
 {
   this.load.image('logo', 'assets/UI/logo.png');
-  this.load.image('progressBar', 'assets/UI/logo.png');
+  //this.load.image('progressBar', 'assets/UI/logo.png');
   this.state.add('loadingScreen', loadState)
 }
 

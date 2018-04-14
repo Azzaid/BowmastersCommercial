@@ -6,9 +6,10 @@ var loadState = {
   preload:function ()
   {
 
-    var logo = game.add.sprite(100, 100, 'logo');
-    var loadBar = game.add.sprite(10, 10, 'progressBar');
-    game.load.setPreloadSprite(loadBar, 'width');
+    var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
+    logo.anchor.setTo(0.5);
+    //var loadBar = game.add.sprite(10, 10, 'progressBar');
+    game.load.setPreloadSprite(logo, 'width');
 
 
     game.add.plugin(PhaserSpine.SpinePlugin);
