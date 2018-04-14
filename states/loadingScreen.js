@@ -5,21 +5,26 @@
 var loadState = {
   preload:function ()
   {
-    var logo = this.add.sprite(100, 100, 'logo');
-    var loadBar = this.load.image('progressBar', '../assets/UI/logo.png');
-    loadBar.anchor(0.5,0.5);
-    game.load.setPreloadSprite(loadBar);
+
+    var logo = game.add.sprite(100, 100, 'logo');
+    var loadBar = game.add.sprite(10, 10, 'progressBar');
+    game.load.setPreloadSprite(loadBar, 'width');
 
 
     game.add.plugin(PhaserSpine.SpinePlugin);
-    game.load.spine('Thor', '../assets/Character');
 
+    game.load.image('background', 'assets/BG/bm_bg.png');
+    game.load.image('ground', 'assets/BG/bm_ground.png');
 
-    this.load.state('gameScreen', gameScreen);
+    game.load.spine('Thor', 'assets/Character/Thor/thor_odinson.json');
+    game.load.spine('Loki', 'assets/Character/Loki/loki_upgraded.json');
+
+    this.state.add('gameScreen', gameScreen);
+
     console.log("loaded loader");
   },
   create: function  ()
   {
-    //this.state.start('gameScreen')
+    this.state.start('gameScreen')
   }
 };

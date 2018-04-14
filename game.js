@@ -23,11 +23,11 @@ var game = new Phaser.Game(config);
 function preload ()
 {
   this.load.image('logo', 'assets/UI/logo.png');
+  this.load.image('progressBar', 'assets/UI/logo.png');
   this.state.add('loadingScreen', loadState)
 }
 
 function create ()
 {
-  var logo = this.add.sprite(100, 100, 'logo');
   this.state.start('loadingScreen');
 }
