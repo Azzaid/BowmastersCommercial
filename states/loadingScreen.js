@@ -16,6 +16,10 @@ var loadState = {
 
     game.load.image('background', 'assets/BG/bm_bg.png');
     game.load.image('ground', 'assets/BG/bm_ground.png');
+    game.load.image('tutorialShadow', 'assets/BG/tutorialScene.png');
+    game.load.image('tutorialHand', 'assets/UI/tutor_hand.png');
+    game.load.image('hammer', 'assets/Character/Thor/hammer_thor.png');
+
 
     game.load.spine('Thor', 'assets/Character/Thor/thor_odinson.json');
     game.load.spine('Loki', 'assets/Character/Loki/loki_upgraded.json');

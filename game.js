@@ -18,6 +18,17 @@ var config = {
   }
 };
 
+//constants representing game state and some of constants which i did not managed how to set them localy. As far as i see phaser demand this to be global.
+var tutorialModeOn = true;
+var enemyMoveInProgress = false;
+var playerAiming = false;
+var enemyHitbox = 0;
+var dragStartPosition = [0, 0];
+var mjolnir=0;
+var mjolnirSwing =0;
+var aim = [];
+var aimAngle = [];
+
 var game = new Phaser.Game(config);
 
 function preload ()
