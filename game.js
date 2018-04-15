@@ -22,11 +22,13 @@ var config = {
 var tutorialModeOn = true;
 var enemyMoveInProgress = false;
 var playerAiming = false;
+var enemy = 0;
+var player = 0;
 var enemyHitbox = 0;
 var dragStartPosition = [0, 0];
-var mjolnir=0;
+var playerWeapon=0;
 var mjolnirSwing =0;
-var aim = [];
+var aimLine = [];
 var aimAngle = [];
 
 var game = new Phaser.Game(config);

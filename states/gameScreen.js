@@ -15,19 +15,20 @@ var gameScreen = {
     game.input.maxPointers = 1;
     game.input.onDown.add(playerAimingStart);
     game.input.onUp.add(playerThrow);
-    game.camera.y = 1000;
 
     game.add.sprite(0,0,'background');
     game.add.sprite(0,1750,'ground');
 
-    var player = game.add.spine(600, 1750, 'Thor');
+    player = game.add.spine(600, 1750, 'Thor');
     player.addAnimationByName(
       0,          //Track index
       "idle_apple",     //Animation's name
       true        //If the animation should loop or not
     );
+      game.camera.focusOn(player);
 
-    var enemy = game.add.spine(2300, 1750, 'Loki');
+
+    enemy = game.add.spine(2300, 1750, 'Loki');
     enemy.scale.x*=-1;
     enemy.setAnimationByName(
       0,          //Track index
@@ -36,7 +37,7 @@ var gameScreen = {
     );
     enemyHitbox = game.add.graphics(enemy.x-80, enemy.y);
       enemyHitbox.anchor.setTo(0, 1);
-      enemyHitbox.beginFill('#00ff00', 0.5);
+      enemyHitbox.beginFill('#00ff00', 0);
       enemyHitbox.drawRect(0, 0, 160, -580);
       game.physics.arcade.enable(enemyHitbox);
       enemyHitbox.body.enable=true;
@@ -69,26 +70,26 @@ var gameScreen = {
               false        //If the animation should loop or not
           );
 
-          mjolnir = game.add.sprite(320, 1400, 'hammer');
-          mjolnir.anchor.setTo(0.3, 0.5);
-          mjolnir.angle = -90;
-          mjolnirSwing = game.add.tween(mjolnir).to({angle:-80}, 1000, 'Linear', true, 0, -1, true);
+          playerWeapon = game.add.sprite(320, 1400, 'hammer');
+          playerWeapon.anchor.setTo(0.3, 0.5);
+          playerWeapon.angle = -90;
+          mjolnirSwing = game.add.tween(playerWeapon).to({angle:-80}, 1000, 'Linear', true, 0, -1, true);
 
           for (i=1; i<11; i++) {
-            aim.push(game.add.graphics(600+i*50, 1430));
-            console.log(aim[i-1]);
-            aim[i-1].beginFill('#ffffff', 0.5-i/20);
-            aim[i-1].drawCircle(0, 0, 30-i*2);
+            aimLine.push(game.add.graphics(600+i*50, 1430));
+            console.log(aimLine[i-1]);
+            aimLine[i-1].beginFill('#ffffff', 0.5-i/20);
+            aimLine[i-1].drawCircle(0, 0, 30-i*2);
           };
       };
       };
     function playerThrow() {
       if (playerAiming) {
-          aim.forEach((circle, i) => {
+          aimLine.forEach((circle, i) => {
               circle.destroy();
       });
 
-          aim = [];
+          aimLine = [];
           playerAiming = false;
           enemyMoveInProgress = true;
 
@@ -104,14 +105,16 @@ var gameScreen = {
           );
 
           mjolnirSwing.stop();
-          game.physics.arcade.enable(mjolnir);
-          mjolnir.body.enable=true;
-          mjolnir.body.setSize(200, 100, 0, -100);
-          mjolnir.body.collideWorldBounds = true;
-          mjolnir.body.allowRotation = true;
-          mjolnir.body.bounce.y = 0.2;
-          mjolnir.body.bounce.x = 0;
-          mjolnir.body.velocity.set(2000*Math.cos(aimAngle), -2000*Math.sin(aimAngle));
+          mjolnirRotate = game.add.tween(playerWeapon).to({angle:-270}, 500, 'Linear', true, 0, -1);
+          game.physics.arcade.enable(playerWeapon);
+          playerWeapon.body.enable=true;
+          playerWeapon.body.setSize(200, 100, 0, -100);
+          playerWeapon.body.collideWorldBounds = true;
+          playerWeapon.body.allowRotation = true;
+          playerWeapon.body.bounce.y = 0.2;
+          playerWeapon.body.bounce.x = 0;
+          playerWeapon.body.velocity.set(2000*Math.cos(aimAngle), -2000*Math.sin(aimAngle));
+          game.camera.follow(playerWeapon);
 
 
       }
@@ -145,16 +148,30 @@ var gameScreen = {
     aimAngle = Math.atan(yShift/xShift);
     if (aimAngle > 1.5) {aimAngle=1.4};
     if (aimAngle < 0) {aimAngle=0.2};
-    aim.forEach((circle, i) => {
+    aimLine.forEach((circle, i) => {
       circle.x = 600+(i+1)*50*Math.cos(aimAngle);
       circle.y = 1430-(i+1)*50*Math.sin(aimAngle);
     });
   }
 
-      game.debug.body(mjolnir);
-      game.debug.body(enemyHitbox);
-      game.physics.arcade.collide(enemyHitbox, mjolnir);
+      //game.debug.body(playerWeapon);
+      //game.debug.body(enemyHitbox);
+      game.physics.arcade.collide(enemyHitbox, playerWeapon, this.enemyHitHandler);
 
-}
+},
+
+    enemyHitHandler: function () {
+      enemy.setAnimationByName(
+          0,          //Track index
+          "fall",     //Animation's name
+          false        //If the animation should loop or not
+      );
+        enemy.addAnimationByName(
+            0,          //Track index
+            "idle_apple",     //Animation's name
+            true        //If the animation should loop or not
+        );
+        playerWeapon.destroy();
+    }
 };
 
