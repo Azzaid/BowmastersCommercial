@@ -22,14 +22,22 @@ var config = {
 var tutorialModeOn = true;
 var enemyMoveInProgress = false;
 var playerAiming = false;
+var finishMode = false;
 var enemy = 0;
+var enemyHealh = 100;
 var player = 0;
+var playeHealt = 100;
 var enemyHitbox = 0;
 var dragStartPosition = [0, 0];
 var playerWeapon=0;
 var mjolnirSwing =0;
+var enemyWeapon=0;
+var gugnirSwing = 0;
 var aimLine = [];
 var aimAngle = [];
+var ground =0;
+var enemyDistanceMeter = 0;
+var enemyDistanceText =0;
 
 var game = new Phaser.Game(config);
 
