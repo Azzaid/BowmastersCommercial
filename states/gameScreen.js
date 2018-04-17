@@ -7,24 +7,25 @@
 var gameScreen = {
   create: function  ()
   {
-      game.world.setBounds(0, 0, 5000, 1900);
+      game.world.setBounds(0, 0, config.worldWidth, config.height);
       game.physics.startSystem(Phaser.Physics.ARCADE);
-      game.physics.arcade.gravity.y = 1000;
 
-    cursors = game.input.keyboard.createCursorKeys();
     game.input.maxPointers = 1;
     game.input.onDown.add(playerAimingStart);
     game.input.onUp.add(playerThrow);
 
-    game.add.sprite(0,0,'background');
-    ground = game.add.sprite(0,1750,'ground');
+    background = game.add.sprite(0,0,'background');
+    background.scale.setTo(config.spriteScale);
+    ground = game.add.sprite(0,config.height-config.groundThickness,'ground');
+      ground.scale.setTo(config.spriteScale);
       game.physics.arcade.enable(ground);
       ground.body.enable=true;
       ground.body.allowGravity = false;
       ground.body.immovable = true;
 
 
-    player = game.add.spine(600, 1750, 'Thor');
+    player = game.add.spine(config.playerXposition, config.height-config.groundThickness, 'Thor');
+    player.scale.setTo(config.spriteScale);
     player.addAnimationByName(
       0,          //Track index
       "idle_apple",     //Animation's name
@@ -32,32 +33,37 @@ var gameScreen = {
     );
       game.camera.focusOn(player);
 
-    enemy = game.add.spine(4300, 1750, 'Loki');
+    enemy = game.add.spine(config.enemyXposition, config.height-config.groundThickness, 'Loki');
       enemy.onEvent.add((i,e)=>{this.enemyTurn(i,e)});
-    enemy.scale.x*=-1;
+      enemy.scale.y*=config.spriteScale;
+    enemy.scale.x*=-config.spriteScale;
     enemy.setAnimationByName(
       0,          //Track index
       "idle_apple",     //Animation's name
       true        //If the animation should loop or not
     );
-    enemyHitbox = game.add.graphics(enemy.x-80, enemy.y);
+    enemyHitbox = game.add.graphics(enemy.x, enemy.y);
       enemyHitbox.anchor.setTo(0, 1);
       enemyHitbox.beginFill('#00ff00', 0);
-      enemyHitbox.drawRect(0, 0, 160, -580);
+      enemyHitbox.drawRect(0, 0, config.characterWidth, config.characterHeight);
       game.physics.arcade.enable(enemyHitbox);
       enemyHitbox.body.enable=true;
       enemyHitbox.body.allowGravity = false;
       enemyHitbox.body.immovable = true;
 
-    var tutorialShadow = game.add.sprite(0, 1000, 'tutorialShadow');
-      tutorialShadow.alpha = 0.5;
-      var tutorialText = game.add.text(420, 1000, 'Tap & Drag', { font: "75px Arial", fill: "#ffffff", align: "center" });
-      var tutorialHand = game.add.sprite(450, 1200, 'tutorialHand');
-      var dragExample = game.add.tween(tutorialHand).to({x:200, y:1600}, 2000, 'Linear', true, 0, -1);
+    var tutorialShadow = game.add.sprite(-300, 0, 'tutorialShadow');
+      tutorialShadow.scale.setTo(config.spriteScale);
+      tutorialShadow.alpha = 0.7;
+      var tutorialText = game.add.text(config.playerXposition, config.height-config.groundThickness-config.characterHeight, 'Tap & Drag', { font: "75px Arial", fill: "#ffffff", align: "center" });
+      tutorialText.anchor.setTo(0.5, 1);
+      var tutorialHand = game.add.sprite(config.playerXposition, config.height-config.groundThickness-config.characterHeight/2, 'tutorialHand');
+      var dragExample = game.add.tween(tutorialHand).to({x:config.playerXposition/1.5, y:config.height-config.groundThickness-config.characterHeight/3}, 2000, 'Linear', true, 0, -1);
       dragExample.start();
 
-      enemyDistanceMeter = game.add.sprite(game.camera.x+1100, game.camera.y+300, 'Loki icon');
-      enemyDistanceText = game.add.text(game.camera.x+1130, game.camera.y+550, ''+(enemy.y - game.camera.x-350), { font: "75px Arial", fill: "#ffffff", align: "center" });
+      enemyDistanceMeter = game.add.sprite(window.innerWidth-config.characterWidth, config.height-config.groundThickness-(config.characterHeight/2), 'Loki icon');
+      enemyDistanceMeter.scale.setTo(config.spriteScale);
+      enemyDistanceMeter.anchor.setTo(1,0.5);
+      enemyDistanceText = game.add.text(window.innerWidth-config.characterWidth, game.camera.y+550, ''+(enemy.y - game.camera.x-350), { font: "75px Arial", fill: "#ffffff", align: "center" });
 
     function playerAimingStart () {
       if (!enemyMoveInProgress) {
@@ -133,24 +139,6 @@ var gameScreen = {
 
   update: function () {
 
-  if (cursors.up.isDown)
-  {
-    game.camera.y -= 10;
-  }
-  else if (cursors.down.isDown)
-  {
-    game.camera.y += 10;
-  }
-
-  if (cursors.left.isDown)
-  {
-    game.camera.x -= 10;
-  }
-  else if (cursors.right.isDown)
-  {
-    game.camera.x += 10;
-  }
-
   if (playerAiming) {
     let xShift = dragStartPosition[0]-game.input.worldX;
     let yShift = game.input.worldY-dragStartPosition[1];
@@ -163,9 +151,9 @@ var gameScreen = {
     });
   }
 
-      //game.debug.body(playerWeapon);
-      //game.debug.body(enemyHitbox);
-      //game.debug.body(enemyWeapon);
+      game.debug.body(playerWeapon);
+      game.debug.body(enemyHitbox);
+      game.debug.body(enemyWeapon);
       game.physics.arcade.collide(enemyHitbox, playerWeapon, this.enemyHitHandler);
       game.physics.arcade.collide(ground, enemyWeapon, this.groundHitHandler);
 
@@ -179,7 +167,7 @@ var gameScreen = {
           enemyDistanceMeter.y = game.camera.y+300;
           enemyDistanceText.x = game.camera.x+1130;
           enemyDistanceText.y = game.camera.y+550;
-          enemyDistanceText.text = ''+(enemy.y - game.camera.x-850);
+         enemyDistanceText.text = ''+(enemy.y - game.camera.x-850);
       } else {
           if (enemyDistanceMeter.alive) {
               enemyDistanceMeter.kill();
