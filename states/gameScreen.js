@@ -115,7 +115,7 @@ var gameScreen = {
           mjolnirRotate = game.add.tween(playerWeapon).to({angle:-270}, 300, 'Linear', true, 0, -1);
           game.physics.arcade.enable(playerWeapon);
           playerWeapon.body.enable=true;
-          playerWeapon.body.setSize(200, 100, 0, -100);
+          playerWeapon.body.setSize(250, 250, 0, -100);
           playerWeapon.body.collideWorldBounds = true;
           playerWeapon.body.allowRotation = true;
           playerWeapon.body.bounce.y = 0.2;
@@ -161,9 +161,9 @@ var gameScreen = {
     });
   }
 
-      game.debug.body(playerWeapon);
-      game.debug.body(enemyHitbox);
-      game.debug.body(enemyWeapon);
+      //game.debug.body(playerWeapon);
+      //game.debug.body(enemyHitbox);
+      //game.debug.body(enemyWeapon);
       game.physics.arcade.collide(enemyHitbox, playerWeapon, this.enemyHitHandler);
       game.physics.arcade.collide(ground, enemyWeapon, this.groundHitHandler);
 
@@ -188,6 +188,7 @@ var gameScreen = {
 },
 
     enemyHitHandler: function () {
+        game.camera.follow(enemy, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
       if (!finishMode) {
           enemy.setAnimationByName(
               0,          //Track index
@@ -213,8 +214,13 @@ var gameScreen = {
               ash = game.add.sprite(enemy.x+50, enemy.y, 'Ash');
           }, 800);
           setTimeout(()=>{
-              game.camera.focusOn(player);
+              game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
               game.add.sprite(player.x+100, player.y - 1000, 'logo');
+              player.setAnimationByName(
+                  0,          //Track index
+                  "win",     //Animation's name
+                  true        //If the animation should loop or not
+              );
           }, 1200);
       };
         playerWeapon.destroy();
@@ -245,19 +251,19 @@ var gameScreen = {
                 finishBanner = game.add.sprite(enemy.x-300, enemy.y-700, 'finish banner');
                 setTimeout(()=>{
                     finishBanner.destroy();
-                    game.camera.focusOn(player);
+                    game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
                     enemyMoveInProgress = false;
-                }, 2000);
+                }, 1500);
             };
         }
     },
     enemyThrow: function () {
-        player.setAnimationByName(
+        enemy.setAnimationByName(
             0,          //Track index
             "grenade_shot",     //Animation's name
             false        //If the animation should loop or not
         );
-        player.addAnimationByName(
+        enemy.addAnimationByName(
             0,          //Track index
             "idle_apple",     //Animation's name
             true        //If the animation should loop or not
@@ -270,7 +276,7 @@ var gameScreen = {
         enemyWeapon.body.collideWorldBounds = true;
         enemyWeapon.body.bounce.y = 0.2;
         enemyWeapon.body.bounce.x = 0;
-        enemyWeapon.body.velocity.set(-2000, -300);
+        enemyWeapon.body.velocity.set(-1000, -300);
         game.camera.follow(enemyWeapon);
         gugnirRotate = game.add.tween(enemyWeapon).to({angle:-110}, 700, 'Linear', true, 0, 0);
     },
@@ -278,8 +284,18 @@ var gameScreen = {
         enemyWeapon.body.allowGravity = false;
         enemyWeapon.body.immovable = true;
         enemyWeapon.body.velocity.set(0, 0);
-        game.camera.focusOn(player);
+        game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
         enemyMoveInProgress = false;
+        player.setAnimationByName(
+            0,          //Track index
+            "scare",     //Animation's name
+            false        //If the animation should loop or not
+        );
+        player.addAnimationByName(
+            0,          //Track index
+            "idle_apple",     //Animation's name
+            true        //If the animation should loop or not
+        );
     },
 };
 
