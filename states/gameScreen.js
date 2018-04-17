@@ -32,7 +32,7 @@ var gameScreen = {
     );
       game.camera.focusOn(player);
 
-    enemy = game.add.spine(2300, 1750, 'Loki');
+    enemy = game.add.spine(4300, 1750, 'Loki');
       enemy.onEvent.add((i,e)=>{this.enemyTurn(i,e)});
     enemy.scale.x*=-1;
     enemy.setAnimationByName(
@@ -120,7 +120,9 @@ var gameScreen = {
           playerWeapon.body.allowRotation = true;
           playerWeapon.body.bounce.y = 0.2;
           playerWeapon.body.bounce.x = 0;
-          playerWeapon.body.velocity.set(2000*Math.cos(aimAngle), -2000*Math.sin(aimAngle));
+          //playerWeapon.body.velocity.set(2000*Math.cos(aimAngle), -2000*Math.sin(aimAngle));
+          throvSpeed = Math.sqrt(((enemy.x - player.x) * game.physics.arcade.gravity.y)/Math.sin(aimAngle*2));
+          playerWeapon.body.velocity.set(throvSpeed*Math.cos(aimAngle), -throvSpeed*Math.sin(aimAngle));
           game.camera.follow(playerWeapon);
 
 
