@@ -14,7 +14,7 @@ var config = {
   characterWidth:100,
   guiPadding: 100,
   gravity: 1000,
-  enemyThrowAngle:70,
+  enemyThrowAngle:40,
   cameraSmoothMovementMultiplyer: 0.1,
   state: {
     preload: preload,
@@ -33,8 +33,8 @@ config.guiPadding=config.guiPadding*config.spriteScale;
 
 config.height = config.backgroundHeight+config.groundThickness;
 config.fullWorldWidth=config.backgroundWidth;
-config.worldScale =  window.innerHeight * window.devicePixelRatio/config.height;
-config.width = window.innerWidth/config.worldScale;
+config.worldScale =  window.visualViewport.height*window.devicePixelRatio/config.height;
+config.width = window.visualViewport.width/config.worldScale;
 
 //constants representing game state and some of constants which i did not managed how to set them localy. As far as i see phaser demand this to be global.
 

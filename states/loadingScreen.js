@@ -6,11 +6,18 @@ var loadState = {
   preload:function ()
   {
 
-    var logo = game.add.sprite(window.innerWidth/config.worldScale/2, config.groundThickness, 'logo');
+    var logo = game.add.sprite(config.width/2, config.groundThickness, 'logo');
     logo.anchor.setTo(0.5, 0);
-    logo.scale.setTo(config.spriteScale);
-    //var loadBar = game.add.sprite(10, 10, 'progressBar');
-    //game.load.setPreloadSprite(logo, 'width');
+    logo.scale.setTo(config.spriteScale*2);
+    loadBarHolder = game.add.graphics(config.width/4, config.height/3*2);
+    loadBarHolder.beginFill(0xA645B6);
+    loadBarHolder.drawRoundedRect(0, 0, config.width/2, config.guiPadding*2, config.guiPadding);
+    loadBarGraphic = game.add.graphics(config.width/4+config.guiPadding/2, config.height/3*2+config.guiPadding/2);
+    loadBarGraphic.beginFill(0xEA3100);
+    loadBarGraphic.drawRoundedRect(0, 0, config.width/2-config.guiPadding, config.guiPadding, config.guiPadding/2);
+    loadBar = game.add.sprite(config.width/4+config.guiPadding/2, config.height/3*2+config.guiPadding/2, loadBarGraphic.generateTexture());
+    loadBarGraphic.destroy();
+    game.load.setPreloadSprite(loadBar, 0);
 
 
     game.add.plugin(PhaserSpine.SpinePlugin);
@@ -31,7 +38,13 @@ var loadState = {
     game.load.image('victoryBanner', 'assets/UI/VictoryBanner.png');
     game.load.image('downloadButton', 'assets/UI/Install.png');
     game.load.image('lifeBarHolder', 'assets/UI/LifeBar.png');
+    game.load.image('enemy pointer', 'assets/UI/arrow.png');
     game.load.image('prizeChest', 'assets/UI/chest.png');
+    game.load.image('play button', 'assets/UI/PlayNow.png');
+    game.load.image('pink_confetti', 'assets/FX/pink_confetti.png');
+    game.load.image('purple_confetti', 'assets/FX/purple_confetti.png');
+    game.load.image('red_confetti', 'assets/FX/red_confetti.png');
+
 
 
 
