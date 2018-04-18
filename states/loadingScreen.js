@@ -6,10 +6,11 @@ var loadState = {
   preload:function ()
   {
 
-    var logo = game.add.sprite(window.innerWidth/2/config.worldScale, config.groundThickness, 'logo');
+    var logo = game.add.sprite(window.innerWidth/config.worldScale/2, config.groundThickness, 'logo');
     logo.anchor.setTo(0.5, 0);
+    logo.scale.setTo(config.spriteScale);
     //var loadBar = game.add.sprite(10, 10, 'progressBar');
-    game.load.setPreloadSprite(logo, 'width');
+    //game.load.setPreloadSprite(logo, 'width');
 
 
     game.add.plugin(PhaserSpine.SpinePlugin);
@@ -30,6 +31,7 @@ var loadState = {
     game.load.image('victoryBanner', 'assets/UI/VictoryBanner.png');
     game.load.image('downloadButton', 'assets/UI/Install.png');
     game.load.image('lifeBarHolder', 'assets/UI/LifeBar.png');
+    game.load.image('prizeChest', 'assets/UI/chest.png');
 
 
 

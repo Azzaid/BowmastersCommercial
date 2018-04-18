@@ -12,6 +12,7 @@ var gameScreen = {
     game.physics.arcade.gravity.y = config.gravity;
 
     game.input.maxPointers = 1;
+    //game.input.onDown.add(this.showPlayerWin);
     game.input.onDown.add(this.startPlayerAiming);
     game.input.onUp.add(this.playerThrow);
 
@@ -26,10 +27,12 @@ var gameScreen = {
 
     downloadButton = game.add.sprite(window.innerWidth/2/config.worldScale, config.height-config.groundThickness/3, 'downloadButton');
     downloadButton.anchor.setTo(0.5, 1);
+    downloadButton.scale.setTo(config.spriteScale);
     downloadButton.fixedToCamera = true;
 
     lifeBarHolder = game.add.sprite(window.innerWidth/2/config.worldScale, config.groundThickness/2, 'lifeBarHolder');
     lifeBarHolder.anchor.setTo(0.5, 0);
+    lifeBarHolder.scale.setTo(config.spriteScale);
     lifeBarHolder.fixedToCamera = true;
 
     player = game.add.spine(config.playerXposition, config.height-config.groundThickness, 'Thor');
@@ -51,7 +54,7 @@ var gameScreen = {
       true        //If the animation should loop or not
     );
     enemyHitbox = game.add.graphics(enemy.x, enemy.y);
-      enemyHitbox.anchor.setTo(0.5, 1);
+      enemyHitbox.anchor.setTo(1, 1);
       enemyHitbox.beginFill('#00ff00', 0);
       enemyHitbox.drawRect(0, 0, config.characterWidth, config.characterHeight);
       game.physics.arcade.enable(enemyHitbox);
@@ -65,8 +68,9 @@ var gameScreen = {
     this.tutorialShadow.alpha = 0.7;
     this.tutorialText = game.add.text(config.playerXposition, config.height-config.groundThickness-config.characterHeight, 'Tap & Drag', { font: "75px Arial", fill: "#ffffff", align: "center" });
     this.tutorialText.anchor.setTo(0.5, 1);
+    this.tutorialText.scale.setTo(config.spriteScale);
       this.tutorialHand = game.add.sprite(config.playerXposition, config.height-config.groundThickness-config.characterHeight/2, 'tutorialHand');
-      this.tutorialHand.scale.setTo(2);
+      this.tutorialHand.scale.setTo(config.spriteScale*2);
     this.dragExample = game.add.tween(this.tutorialHand).to({x:config.playerXposition/1.5, y:config.height-config.groundThickness-config.characterHeight/3}, 2000, 'Linear', true, 0, -1);
     this.dragExample.start();
 
@@ -92,19 +96,19 @@ var gameScreen = {
     gameScreen.aimLine.angle = -(this.aimAngle*57.2958);
   }
 
-      game.debug.body(playerWeapon);
-      game.debug.body(enemyHitbox);
-      game.debug.body(enemyWeapon);
+      //game.debug.body(playerWeapon);
+      //game.debug.body(enemyHitbox);
+      //game.debug.body(enemyWeapon);
       game.physics.arcade.collide(enemyHitbox, playerWeapon, this.enemyHitHandler);
       game.physics.arcade.collide(ground, enemyWeapon, this.groundHitHandler);
 
 
-      if (game.camera.x + window.innerWidth/config.worldScale/2 < config.enemyXposition) {
+      if (game.camera.x + window.innerWidth/config.worldScale < config.enemyXposition) {
           if (!gameScreen.enemyDistanceMeter.alive) {
             gameScreen.enemyDistanceMeter.revive();
             gameScreen.enemyDistanceText.revive();
           };
-        gameScreen.enemyDistanceText.text = '' + Math.floor(enemy.x - game.camera.x-window.innerWidth/config.worldScale/2);
+        gameScreen.enemyDistanceText.text = '' + Math.floor(enemy.x - game.camera.x-window.innerWidth/config.worldScale);
       } else {
           if (gameScreen.enemyDistanceMeter.alive) {
             gameScreen.enemyDistanceMeter.kill();
@@ -131,8 +135,9 @@ var gameScreen = {
         false        //If the animation should loop or not
       );
 
-      this.playerWeapon = game.add.sprite(config.playerXposition-config.characterWidth*2, config.height - config.groundThickness - config.characterHeight*0.7, 'hammer');
+      this.playerWeapon = game.add.sprite(player.x-config.characterWidth*2.5, config.height - config.groundThickness - config.characterHeight*0.7, 'hammer');
       this.playerWeapon.anchor.setTo(0.3, 0.5);
+      this.playerWeapon.scale.setTo(config.spriteScale);
       this.playerWeapon.angle = -90;
       this.mjolnirSwing = game.add.tween(this.playerWeapon).to({angle:-80}, 1000, 'Linear', true, 0, -1, true);
 
@@ -140,7 +145,7 @@ var gameScreen = {
 
       for (i=1; i<11; i++) {
         gameScreen.aimLine.beginFill('#ffffff', 0.5-i/20);
-        gameScreen.aimLine.drawCircle(config.characterWidth*i, 0, 30-i*2);
+        gameScreen.aimLine.drawCircle(config.characterWidth*i, 0, 30*config.spriteScale-i*2*config.spriteScale);
       };
     };
   },
@@ -190,6 +195,7 @@ var gameScreen = {
               false        //If the animation should loop or not
           );
       } else {
+
           enemy.setAnimationByName(
               0,          //Track index
               "death_by_shock",     //Animation's name
@@ -197,30 +203,28 @@ var gameScreen = {
           );
           setTimeout(()=>{lightingStrikeStage1 = game.add.sprite(enemy.x+config.characterWidth/2, enemy.y-config.characterHeight/2, 'lightingStrikeStage1');
             lightingStrikeStage1.anchor.setTo(0.5, 1);
-            lightingSparks1 = game.add.sprite(enemy.x+config.characterWidth/2, enemy.y-config.characterHeight/2, 'lightingSparks1');
-            lightingSparks1.anchor.setTo(0.5)}, 200);
+            lightingStrikeStage1.scale.setTo(config.spriteScale);
+            this.lightingSparks1 = game.add.sprite(enemy.x+config.characterWidth/2, enemy.y-config.characterHeight/2, 'lightingSparks1');
+            this.lightingSparks1.anchor.setTo(0.5);
+            this.lightingSparks1.scale.setTo(config.spriteScale);
+          }, 200);
           setTimeout(()=>{lightingStrikeStage2 = game.add.sprite(enemy.x+config.characterWidth/2, enemy.y-config.characterHeight/2, 'lightingStrikeStage2');
             lightingStrikeStage2.anchor.setTo(0.5, 1);
-            lightingSparks2 = game.add.sprite(enemy.x+config.characterWidth/2, enemy.y-config.characterHeight/2, 'lightingSparks2');
-            lightingSparks2.anchor.setTo(0.5);
+            lightingStrikeStage2.scale.setTo(config.spriteScale);
+            this.lightingSparks2 = game.add.sprite(enemy.x+config.characterWidth/2, enemy.y-config.characterHeight/2, 'lightingSparks2');
+            this.lightingSparks2.anchor.setTo(0.5);
+            this.lightingSparks2.scale.setTo(config.spriteScale);
             lightingStrikeStage1.destroy()}, 400);
           setTimeout(()=>{
               enemy.destroy();
             lightingStrikeStage2.destroy();
-            lightingSparks1.destroy();
-            lightingSparks2.destroy();
-              ash = game.add.sprite(enemy.x+config.characterWidth/2, enemy.y, 'Ash');
+            this.lightingSparks1.destroy();
+            this.lightingSparks2.destroy();
+              ash = game.add.sprite(enemy.x-config.characterWidth/2, enemy.y, 'Ash');
               ash.anchor.setTo(0.5, 1);
+            ash.scale.setTo(config.spriteScale);
           }, 800);
-          setTimeout(()=>{
-              game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, config.cameraSmoothMovementMultiplyer, config.cameraSmoothMovementMultiplyer);
-              game.add.sprite(player.x + config.characterWidth/2, player.y - config.characterHeight*1.5, 'victoryBanner');
-              player.setAnimationByName(
-                  0,          //Track index
-                  "win",     //Animation's name
-                  true        //If the animation should loop or not
-              );
-          }, 1200);
+          setTimeout(()=>{gameScreen.showPlayerWin();}, 2000);
       };
         playerWeapon.destroy();
 
@@ -234,10 +238,11 @@ var gameScreen = {
                     "grenade_draw",     //Animation's name
                     false        //If the animation should loop or not
                 );
-                enemyWeapon = game.add.sprite(enemy.x+200, enemy.y-400, 'spear');
+                enemyWeapon = game.add.sprite(enemy.x+config.characterWidth*2.5, config.height - config.groundThickness - config.characterHeight*0.7, 'spear');
                 enemyWeapon.anchor.setTo(0.5, 0.7);
+                enemyWeapon.scale.setTo(config.spriteScale);
                 enemyWeapon.angle = -90;
-                gugnirSwing = game.add.tween(enemyWeapon).to({angle:-70}, 1000, 'Linear', true, 0, -1, true);
+                gugnirSwing = game.add.tween(enemyWeapon).to({angle:-70}, 2000, 'Linear', true, 0, 1, false);
                 setTimeout(()=>{this.enemyThrow()}, 2000);
             } else {
                 enemy.setAnimationByName(
@@ -246,7 +251,9 @@ var gameScreen = {
                     true        //If the animation should loop or not
                 );
                 finishMode = true;
-                finishBanner = game.add.sprite(enemy.x-300, enemy.y-700, 'finish banner');
+                finishBanner = game.add.sprite(enemy.x+config.characterWidth/2, enemy.y+config.characterHeight+config.guiPadding, 'finish banner');
+                finishBanner.anchor.setTo(0.5,1);
+                finishBanner.scale.setTo(config.spriteScale);
                 setTimeout(()=>{
                     finishBanner.destroy();
                     game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
@@ -274,9 +281,12 @@ var gameScreen = {
         enemyWeapon.body.collideWorldBounds = true;
         enemyWeapon.body.bounce.y = 0.2;
         enemyWeapon.body.bounce.x = 0;
-        enemyWeapon.body.velocity.set(-1500, -600);
+
+        let throwAngle = config.enemyThrowAngle/57.2958;
+      let throwSpeed = Math.sqrt(((enemy.x - player.x+config.characterWidth*2) * game.physics.arcade.gravity.y)/Math.sin(gameScreen.throwAngle*2));
+      enemyWeapon.body.velocity.set(-throwSpeed*Math.cos(throwAngle), -throwSpeed*Math.sin(throwAngle));
         game.camera.follow(enemyWeapon);
-        gugnirRotate = game.add.tween(enemyWeapon).to({angle:-110}, 700, 'Linear', true, 0, 0);
+        gugnirRotate = game.add.tween(enemyWeapon).to({angle:-110}, (enemy.x - player.x+config.characterWidth*2)/throwSpeed*Math.cos(throwAngle), 'Linear', true, 0, 0);
     },
     groundHitHandler: function () {
         enemyWeapon.body.allowGravity = false;
@@ -295,5 +305,25 @@ var gameScreen = {
             true        //If the animation should loop or not
         );
     },
+  showPlayerWin: function () {
+    game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, config.cameraSmoothMovementMultiplyer, config.cameraSmoothMovementMultiplyer);
+    setTimeout(()=>{
+      victoryBanner = game.add.sprite(player.x + config.characterWidth/2, -config.groundThickness, 'victoryBanner');
+      victoryBanner.anchor.setTo(0.5,1);
+      victoryBanner.scale.setTo(config.spriteScale);
+      victoryBannerPopIn = game.add.tween(victoryBanner).to({y:player.y - config.characterHeight - config.guiPadding}, 800, 'Linear', true, 0, 0, false);
+      prizeScreenGroup = game.add.group();
+      prizeChest = game.add.sprite(config.height/2, window.innerWidth/config.worldScale/6*7, 'prizeChest', prizeScreenGroup);
+      prizeChest.scale.setTo(config.spriteScale);
+      prizeScreenEaseIn  = game.add.tween(prizeScreenGroup).to({x:window.innerWidth/config.worldScale/6*5}, 500, 'Linear', true, 0, 1, false);
+      console.log('you are winner');
+      player.setAnimationByName(
+        0,          //Track index
+        "win",     //Animation's name
+        true        //If the animation should loop or not
+      );
+    },300);
+    //prizeScreen.add.text(config.height/2+2*config.guiPadding, window.innerWidth/config.worldScale/6*7, 'You got a prize', { font: "75px Arial", fill: "#ffffff", align: "center" });
+  },
 };
 

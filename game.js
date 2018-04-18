@@ -4,23 +4,37 @@
 
 var config = {
   type: Phaser.AUTO,
-  width: window.innerWidth/(window.innerHeight * window.devicePixelRatio/1900),
-  fullWorldWidth: 5000,
-  height: 1900,
-  worldScale: window.innerHeight * window.devicePixelRatio/1900,
-    spriteScale:1,
-    groundThickness: 100,
-    playerXposition:600,
-    enemyXposition: 4500,
-    characterHeight:600,
-    characterWidth:100,
+  spriteScale:0.4,
+  backgroundWidth:5000,
+  backgroundHeight:1900,
+  groundThickness: 250,
+  playerXposition:750,
+  enemyXposition: 4500,
+  characterHeight:600,
+  characterWidth:100,
+  guiPadding: 100,
   gravity: 1000,
+  enemyThrowAngle:70,
   cameraSmoothMovementMultiplyer: 0.1,
   state: {
     preload: preload,
     create: create
   }
 };
+
+config.backgroundWidth=config.backgroundWidth*config.spriteScale;
+config.backgroundHeight=config.backgroundHeight*config.spriteScale;
+config.groundThickness=config.groundThickness*config.spriteScale;
+config.playerXposition=config.playerXposition*config.spriteScale;
+config.enemyXposition=config.enemyXposition*config.spriteScale;
+config.characterHeight=config.characterHeight*config.spriteScale;
+config.characterWidth=config.characterWidth*config.spriteScale;
+config.guiPadding=config.guiPadding*config.spriteScale;
+
+config.height = config.backgroundHeight+config.groundThickness;
+config.fullWorldWidth=config.backgroundWidth;
+config.worldScale =  window.innerHeight * window.devicePixelRatio/config.height;
+config.width = window.innerWidth/config.worldScale;
 
 //constants representing game state and some of constants which i did not managed how to set them localy. As far as i see phaser demand this to be global.
 
@@ -51,7 +65,6 @@ function preload ()
   game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
   game.scale.setUserScale((window.innerHeight * window.devicePixelRatio)/config.height, window.innerHeight * window.devicePixelRatio/config.height, 0, 0);
 
-  console.log('height:'+ window.innerHeight + '  pixelR:'+window.devicePixelRatio + ' scale:'+(window.innerHeight * window.devicePixelRatio)/config.height);
   this.load.image('logo', 'assets/UI/logo.png');
   //this.load.image('progressBar', 'assets/UI/logo.png');
   this.state.add('loadingScreen', loadState)
