@@ -62,11 +62,15 @@ var gameScreen = {
       enemyHitbox.body.allowGravity = false;
       enemyHitbox.body.immovable = true;
 
-    this.tutorialShadow = game.add.sprite(player.x, player.y-config.characterHeight/2, 'tutorialShadow');
-    this.tutorialShadow.anchor.setTo(0.5, 0.5);
-    this.tutorialShadow.scale.setTo(config.spriteScale);
-    this.tutorialShadow.alpha = 0.7;
-    this.tutorialText = game.add.text(config.playerXposition, config.height-config.groundThickness-config.characterHeight, 'Tap & Drag', { font: "75px Arial", fill: "#ffffff", align: "center" });
+      this.tutorialShadow = game.add.graphics(0,0);
+      this.tutorialShadow.lineColor = 0x000000;
+      this.tutorialShadow.lineAlpha = 0.9;
+      this.tutorialShadow.lineWidth = config.guiPadding*2;
+      for (i=0; i<config.width/config.guiPadding/2; i++) {
+          this.tutorialShadow.drawCircle(player.x, player.y-config.characterHeight/2, config.characterHeight*1.5+config.guiPadding*(2+i*4));
+      };
+
+    this.tutorialText = game.add.text(config.playerXposition, config.height-config.groundThickness-config.characterHeight-config.guiPadding*2, 'Tap & Drag', { font: "75px Arial", fill: "#ffffff", align: "center" });
     this.tutorialText.anchor.setTo(0.5, 1);
     this.tutorialText.scale.setTo(config.spriteScale);
       this.tutorialHand = game.add.sprite(config.playerXposition, config.height-config.groundThickness-config.characterHeight/2, 'tutorialHand');
@@ -74,13 +78,18 @@ var gameScreen = {
     this.dragExample = game.add.tween(this.tutorialHand).to({x:config.playerXposition/1.5, y:config.height-config.groundThickness-config.characterHeight/3}, 2000, 'Linear', true, 0, -1);
     this.dragExample.start();
 
-      this.enemyDistanceMeter = game.add.sprite(window.innerWidth/config.worldScale, config.height-config.groundThickness-config.characterHeight, 'Loki icon');
-      this.enemyDistanceMeter.scale.setTo(config.spriteScale);
-      this.enemyDistanceMeter.anchor.setTo(1,0.5);
-    this.enemyDistanceMeter.fixedToCamera = true;
-      this.enemyDistanceText = game.add.text(window.innerWidth/config.worldScale, config.height-config.groundThickness-config.characterHeight+200, ''+(enemy.x - game.camera.x-window.innerWidth/config.worldScale/2), { font: "75px Arial", fill: "#ffffff", align: "center" });
-    this.enemyDistanceText.anchor.setTo(1,0.5);
-      this.enemyDistanceText.fixedToCamera = true;
+      this.enemyDistanceMeterGroup = game.add.group();
+      this.enemyDistanceMeterGroup.fixedToCamera=true;
+
+      enemyDistanceMeter = game.add.sprite(config.width-config.guiPadding, config.height-config.groundThickness-config.characterHeight, 'Loki icon',{}, this.enemyDistanceMeterGroup);
+      enemyDistanceMeter.scale.setTo(config.spriteScale/2);
+      enemyDistanceMeter.anchor.setTo(0.5, 0.5);
+      enemyDistanceMeter = game.add.sprite(config.width, config.height-config.groundThickness-config.characterHeight, 'enemy pointer',{}, this.enemyDistanceMeterGroup);
+      enemyDistanceMeter.scale.setTo(config.spriteScale*2);
+      enemyDistanceMeter.anchor.setTo(1, 0.5);
+      this.enemyDistanceText = game.add.text(config.width-config.guiPadding, config.height-config.groundThickness-config.characterHeight+config.guiPadding/2, ''+(enemy.x - game.camera.x-window.innerWidth/config.worldScale/2), { font: "75px Arial", fill: "#ffffff", align: "center" }, this.enemyDistanceMeterGroup);
+      this.enemyDistanceText.anchor.setTo(0.5,0);
+      this.enemyDistanceText.scale.setTo(config.spriteScale);
 
 
   },
@@ -104,15 +113,13 @@ var gameScreen = {
 
 
       if (game.camera.x + window.innerWidth/config.worldScale < config.enemyXposition) {
-          if (!gameScreen.enemyDistanceMeter.alive) {
-            gameScreen.enemyDistanceMeter.revive();
-            gameScreen.enemyDistanceText.revive();
+          if (!gameScreen.enemyDistanceMeterGroup.alive) {
+              gameScreen.enemyDistanceMeterGroup.revive();
           };
         gameScreen.enemyDistanceText.text = '' + Math.floor(enemy.x - game.camera.x-window.innerWidth/config.worldScale);
       } else {
-          if (gameScreen.enemyDistanceMeter.alive) {
-            gameScreen.enemyDistanceMeter.kill();
-            gameScreen.enemyDistanceText.kill();
+          if (gameScreen.enemyDistanceMeterGroup.alive) {
+              gameScreen.enemyDistanceMeterGroup.kill();
           };
       };
 
@@ -283,17 +290,20 @@ var gameScreen = {
         enemyWeapon.body.bounce.x = 0;
 
         let throwAngle = config.enemyThrowAngle/57.2958;
-      let throwSpeed = Math.sqrt(((enemy.x - player.x+config.characterWidth*2) * game.physics.arcade.gravity.y)/Math.sin(gameScreen.throwAngle*2));
+      let throwSpeed = Math.sqrt(((enemy.x - player.x-config.characterWidth*6) * game.physics.arcade.gravity.y)/Math.sin(throwAngle*2));
       enemyWeapon.body.velocity.set(-throwSpeed*Math.cos(throwAngle), -throwSpeed*Math.sin(throwAngle));
         game.camera.follow(enemyWeapon);
-        gugnirRotate = game.add.tween(enemyWeapon).to({angle:-110}, (enemy.x - player.x+config.characterWidth*2)/throwSpeed*Math.cos(throwAngle), 'Linear', true, 0, 0);
+        gugnirRotate = game.add.tween(enemyWeapon).to({angle:-110}, (enemy.x - player.x+config.characterWidth*6)/throwSpeed*Math.cos(throwAngle)*1000, 'Linear', true, 0, 0);
     },
     groundHitHandler: function () {
         enemyWeapon.body.allowGravity = false;
         enemyWeapon.body.immovable = true;
         enemyWeapon.body.velocity.set(0, 0);
+
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+
         enemyMoveInProgress = false;
+
         player.setAnimationByName(
             0,          //Track index
             "scare",     //Animation's name
@@ -305,25 +315,57 @@ var gameScreen = {
             true        //If the animation should loop or not
         );
     },
+
+
   showPlayerWin: function () {
     game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, config.cameraSmoothMovementMultiplyer, config.cameraSmoothMovementMultiplyer);
+
+    redConfetti = game.add.graphics();
+
     setTimeout(()=>{
-      victoryBanner = game.add.sprite(player.x + config.characterWidth/2, -config.groundThickness, 'victoryBanner');
-      victoryBanner.anchor.setTo(0.5,1);
-      victoryBanner.scale.setTo(config.spriteScale);
-      victoryBannerPopIn = game.add.tween(victoryBanner).to({y:player.y - config.characterHeight - config.guiPadding}, 800, 'Linear', true, 0, 0, false);
-      prizeScreenGroup = game.add.group();
-      prizeChest = game.add.sprite(config.height/2, window.innerWidth/config.worldScale/6*7, 'prizeChest', prizeScreenGroup);
+        prizeScreenGroup = game.add.group();
+
+      prizeScreen = game.add.graphics(config.width/6*7, 0, prizeScreenGroup);
+      prizeScreen.beginFill(0xA645B6);
+      prizeScreen.drawRect(0,0, config.width/6*3, config.height);
+
+      prizeChest = game.add.sprite(config.width/6*8, config.height/2, 'prizeChest', {}, prizeScreenGroup);
       prizeChest.scale.setTo(config.spriteScale);
-      prizeScreenEaseIn  = game.add.tween(prizeScreenGroup).to({x:window.innerWidth/config.worldScale/6*5}, 500, 'Linear', true, 0, 1, false);
-      console.log('you are winner');
+      prizeChest.anchor.setTo(0.5);
+
+      congratText = game.add.text(config.width/6*8, config.height/2-config.guiPadding*4, 'You got a prize', { font: "75px Arial", fill: "#ffffff", align: "center" }, prizeScreenGroup);
+      congratText.scale.setTo(config.spriteScale);
+      congratText.anchor.setTo(0.5);
+
+      playButton = game.add.sprite(config.width/6*8, config.height/2+config.guiPadding*4, 'play button', {}, prizeScreenGroup);
+      playButton.scale.setTo(config.spriteScale);
+      playButton.anchor.setTo(0.5);
+
+      prizeScreenEaseIn  = game.add.tween(prizeScreenGroup).to({x:-(config.width/6*3)}, 800, 'Linear', true, 0, 0, false);
+      prizeScreenEaseIn.start();
+
+        emitter = game.add.emitter(config.width/3, config.guiPadding*6, 200);
+        emitter.width = config.width/2;
+        emitter.makeParticles(['pink_confetti','purple_confetti']);
+        emitter.minParticleScale = 0.07;
+        emitter.maxParticleScale = 0.15;
+        emitter.minParticleSpeed.setTo(0.000001, 0.000001);
+        emitter.maxParticleSpeed.setTo(0.00002, 0.00002);
+        emitter.gravity = 0.000001;
+        emitter.flow(2000, 100, 10, -1);
+
+        victoryBanner = game.add.sprite(config.width/3, -config.groundThickness, 'victoryBanner');
+        victoryBanner.anchor.setTo(0.5,1);
+        victoryBanner.scale.setTo(config.spriteScale*2);
+        victoryBannerPopIn = game.add.tween(victoryBanner).to({y:config.guiPadding*8}, 800, 'Linear', true, 0, 0, false);
+
       player.setAnimationByName(
         0,          //Track index
         "win",     //Animation's name
         true        //If the animation should loop or not
       );
     },300);
-    //prizeScreen.add.text(config.height/2+2*config.guiPadding, window.innerWidth/config.worldScale/6*7, 'You got a prize', { font: "75px Arial", fill: "#ffffff", align: "center" });
+
   },
 };
 
