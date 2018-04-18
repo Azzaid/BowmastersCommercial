@@ -6,9 +6,8 @@ var loadState = {
   preload:function ()
   {
 
-    var logo = game.add.sprite(window.innerWidth/2, config.groundThickness, 'logo');
-    logo.anchor.x = 0.5;
-    logo.anchor.y = 0;
+    var logo = game.add.sprite(window.innerWidth/2/config.worldScale, config.groundThickness, 'logo');
+    logo.anchor.setTo(0.5, 0);
     //var loadBar = game.add.sprite(10, 10, 'progressBar');
     game.load.setPreloadSprite(logo, 'width');
 

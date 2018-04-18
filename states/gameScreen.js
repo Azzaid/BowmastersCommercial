@@ -5,14 +5,14 @@
 
 
 var gameScreen = {
-  create: function  ()
+  create: function ()
   {
-      game.world.setBounds(0, 0, config.worldWidth, config.height);
+      game.world.setBounds(0, 0, config.width, config.height);
       game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.input.maxPointers = 1;
-    game.input.onDown.add(playerAimingStart);
-    game.input.onUp.add(playerThrow);
+    game.input.onDown.add(this.startPlayerAiming);
+    game.input.onUp.add(this.playerThrow);
 
     background = game.add.sprite(0,0,'background');
     background.scale.setTo(config.spriteScale);
@@ -51,91 +51,24 @@ var gameScreen = {
       enemyHitbox.body.allowGravity = false;
       enemyHitbox.body.immovable = true;
 
-    var tutorialShadow = game.add.sprite(-300, 0, 'tutorialShadow');
-      tutorialShadow.scale.setTo(config.spriteScale);
-      tutorialShadow.alpha = 0.7;
-      var tutorialText = game.add.text(config.playerXposition, config.height-config.groundThickness-config.characterHeight, 'Tap & Drag', { font: "75px Arial", fill: "#ffffff", align: "center" });
-      tutorialText.anchor.setTo(0.5, 1);
-      var tutorialHand = game.add.sprite(config.playerXposition, config.height-config.groundThickness-config.characterHeight/2, 'tutorialHand');
-      var dragExample = game.add.tween(tutorialHand).to({x:config.playerXposition/1.5, y:config.height-config.groundThickness-config.characterHeight/3}, 2000, 'Linear', true, 0, -1);
-      dragExample.start();
+    this.tutorialShadow = game.add.sprite(player.x, player.y-config.characterHeight/2, 'tutorialShadow');
+    this.tutorialShadow.anchor.setTo(0.5, 0.5);
+    this.tutorialShadow.scale.setTo(config.spriteScale);
+    this.tutorialShadow.alpha = 0.7;
+    this.tutorialText = game.add.text(config.playerXposition, config.height-config.groundThickness-config.characterHeight, 'Tap & Drag', { font: "75px Arial", fill: "#ffffff", align: "center" });
+    this.tutorialText.anchor.setTo(0.5, 1);
+      this.tutorialHand = game.add.sprite(config.playerXposition, config.height-config.groundThickness-config.characterHeight/2, 'tutorialHand');
+      this.tutorialHand.scale.setTo(2);
+    this.dragExample = game.add.tween(this.tutorialHand).to({x:config.playerXposition/1.5, y:config.height-config.groundThickness-config.characterHeight/3}, 2000, 'Linear', true, 0, -1);
+    this.dragExample.start();
 
-      enemyDistanceMeter = game.add.sprite(window.innerWidth-config.characterWidth, config.height-config.groundThickness-(config.characterHeight/2), 'Loki icon');
-      enemyDistanceMeter.scale.setTo(config.spriteScale);
-      enemyDistanceMeter.anchor.setTo(1,0.5);
-      enemyDistanceText = game.add.text(window.innerWidth-config.characterWidth, game.camera.y+550, ''+(enemy.y - game.camera.x-350), { font: "75px Arial", fill: "#ffffff", align: "center" });
-
-    function playerAimingStart () {
-      if (!enemyMoveInProgress) {
-          if (tutorialModeOn) {
-              tutorialShadow.destroy();
-              tutorialText.destroy();
-              tutorialHand.destroy();
-              tutorialModeOn = false;
-          }
-
-          playerAiming = true;
-
-          dragStartPosition = [game.input.worldX, game.input.worldY];
-
-          player.setAnimationByName(
-              0,          //Track index
-              "grenade_draw",     //Animation's name
-              false        //If the animation should loop or not
-          );
-
-          playerWeapon = game.add.sprite(320, 1400, 'hammer');
-          playerWeapon.anchor.setTo(0.3, 0.5);
-          playerWeapon.angle = -90;
-          mjolnirSwing = game.add.tween(playerWeapon).to({angle:-80}, 1000, 'Linear', true, 0, -1, true);
-
-          for (i=1; i<11; i++) {
-            aimLine.push(game.add.graphics(600+i*50, 1430));
-            aimLine[i-1].beginFill('#ffffff', 0.5-i/20);
-            aimLine[i-1].drawCircle(0, 0, 30-i*2);
-          };
-      };
-      };
-    function playerThrow() {
-      if (playerAiming) {
-          aimLine.forEach((circle, i) => {
-              circle.destroy();
-      });
-
-          aimLine = [];
-          playerAiming = false;
-          enemyMoveInProgress = true;
-
-          player.setAnimationByName(
-              0,          //Track index
-              "grenade_shot",     //Animation's name
-              false        //If the animation should loop or not
-          );
-          player.addAnimationByName(
-              0,          //Track index
-              "idle_apple",     //Animation's name
-              true        //If the animation should loop or not
-          );
-
-          mjolnirSwing.stop();
-          mjolnirRotate = game.add.tween(playerWeapon).to({angle:-270}, 300, 'Linear', true, 0, -1);
-          game.physics.arcade.enable(playerWeapon);
-          playerWeapon.body.enable=true;
-          playerWeapon.body.setSize(250, 250, 0, -100);
-          playerWeapon.body.collideWorldBounds = true;
-          playerWeapon.body.allowRotation = true;
-          playerWeapon.body.bounce.y = 0.2;
-          playerWeapon.body.bounce.x = 0;
-          //playerWeapon.body.velocity.set(2000*Math.cos(aimAngle), -2000*Math.sin(aimAngle));
-          throvSpeed = Math.sqrt(((enemy.x - player.x) * game.physics.arcade.gravity.y)/Math.sin(aimAngle*2));
-          playerWeapon.body.velocity.set(throvSpeed*Math.cos(aimAngle), -throvSpeed*Math.sin(aimAngle));
-          game.camera.follow(playerWeapon);
+      this.enemyDistanceMeter = game.add.sprite(window.innerWidth/config.worldScale, config.height-config.groundThickness-(config.characterHeight/2), 'Loki icon');
+      this.enemyDistanceMeter.scale.setTo(config.spriteScale);
+      this.enemyDistanceMeter.anchor.setTo(1,0.5);
+      this.enemyDistanceText = game.add.text(window.innerWidth-config.characterWidth, game.camera.y+550, ''+(enemy.y - game.camera.x-350), { font: "75px Arial", fill: "#ffffff", align: "center" });
 
 
-      }
-    }
   },
-
 
   update: function () {
 
@@ -143,7 +76,7 @@ var gameScreen = {
     let xShift = dragStartPosition[0]-game.input.worldX;
     let yShift = game.input.worldY-dragStartPosition[1];
     aimAngle = Math.atan(yShift/xShift);
-    if (aimAngle > 1.5) {aimAngle=1.4};
+    if (aimAngle > 1.5) {aimAngle=1.3};
     if (aimAngle < 0) {aimAngle=0.2};
     aimLine.forEach((circle, i) => {
       circle.x = 600+(i+1)*50*Math.cos(aimAngle);
@@ -159,23 +92,94 @@ var gameScreen = {
 
 
       if (game.camera.x < 900) {
-          if (!enemyDistanceMeter.alive) {
-              enemyDistanceMeter.revive();
-              enemyDistanceText.revive();
+          if (!gameScreen.enemyDistanceMeter.alive) {
+            gameScreen.enemyDistanceMeter.revive();
+            gameScreen.enemyDistanceText.revive();
           };
-          enemyDistanceMeter.x = game.camera.x+1100;
-          enemyDistanceMeter.y = game.camera.y+300;
-          enemyDistanceText.x = game.camera.x+1130;
-          enemyDistanceText.y = game.camera.y+550;
-         enemyDistanceText.text = ''+(enemy.y - game.camera.x-850);
+        gameScreen.enemyDistanceMeter.x = game.camera.x+1100;
+        gameScreen.enemyDistanceMeter.y = game.camera.y+300;
+        gameScreen.enemyDistanceText.x = game.camera.x+1130;
+        gameScreen.enemyDistanceText.y = game.camera.y+550;
+        gameScreen.enemyDistanceText.text = ''+(enemy.y - game.camera.x-850);
       } else {
-          if (enemyDistanceMeter.alive) {
-              enemyDistanceMeter.kill();
-              enemyDistanceText.kill();
+          if (gameScreen.enemyDistanceMeter.alive) {
+            gameScreen.enemyDistanceMeter.kill();
+            gameScreen.enemyDistanceText.kill();
           };
       };
 
 },
+
+  startPlayerAiming: () => {
+    if (!enemyMoveInProgress) {
+      if (tutorialModeOn) {
+        gameScreen.tutorialShadow.destroy();
+        gameScreen.tutorialText.destroy();
+        gameScreen.tutorialHand.destroy();
+        gameScreen.tutorialModeOn = false;
+      }
+
+      playerAiming = true;
+
+      dragStartPosition = [game.input.worldX, game.input.worldY];
+
+      player.setAnimationByName(
+        0,          //Track index
+        "grenade_draw",     //Animation's name
+        false        //If the animation should loop or not
+      );
+
+      playerWeapon = game.add.sprite(320, 1400, 'hammer');
+      playerWeapon.anchor.setTo(0.3, 0.5);
+      playerWeapon.angle = -90;
+      mjolnirSwing = game.add.tween(playerWeapon).to({angle:-80}, 1000, 'Linear', true, 0, -1, true);
+
+      for (i=1; i<11; i++) {
+        aimLine.push(game.add.graphics(600+i*50, 1430));
+        aimLine[i-1].beginFill('#ffffff', 0.5-i/20);
+        aimLine[i-1].drawCircle(0, 0, 30-i*2);
+      };
+    };
+  },
+
+  playerThrow: function() {
+    if (playerAiming) {
+      aimLine.forEach((circle, i) => {
+        circle.destroy();
+      });
+
+      aimLine = [];
+      playerAiming = false;
+      enemyMoveInProgress = true;
+
+      player.setAnimationByName(
+        0,          //Track index
+        "grenade_shot",     //Animation's name
+        false        //If the animation should loop or not
+      );
+      player.addAnimationByName(
+        0,          //Track index
+        "idle_apple",     //Animation's name
+        true        //If the animation should loop or not
+      );
+
+      mjolnirSwing.stop();
+      mjolnirRotate = game.add.tween(playerWeapon).to({angle:-270}, 300, 'Linear', true, 0, -1);
+      game.physics.arcade.enable(playerWeapon);
+      playerWeapon.body.enable=true;
+      playerWeapon.body.setSize(250, 250, 0, -100);
+      playerWeapon.body.collideWorldBounds = true;
+      playerWeapon.body.allowRotation = true;
+      playerWeapon.body.bounce.y = 0.2;
+      playerWeapon.body.bounce.x = 0;
+      //playerWeapon.body.velocity.set(2000*Math.cos(aimAngle), -2000*Math.sin(aimAngle));
+      throvSpeed = Math.sqrt(((enemy.x - player.x) * game.physics.arcade.gravity.y)/Math.sin(aimAngle*2));
+      playerWeapon.body.velocity.set(throvSpeed*Math.cos(aimAngle), -throvSpeed*Math.sin(aimAngle));
+      game.camera.follow(playerWeapon);
+
+
+    }
+  },
 
     enemyHitHandler: function () {
         game.camera.follow(enemy, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);

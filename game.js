@@ -4,16 +4,15 @@
 
 var config = {
   type: Phaser.AUTO,
-  width: window.innerWidth,
-    worldWidth:2000,
-  height: window.innerHeight,
-    worldHeight:850,
-    spriteScale:0.4,
+  width: window.innerWidth/(window.innerHeight * window.devicePixelRatio/1900),
+  height: 1900,
+  worldScale: window.innerHeight * window.devicePixelRatio/1900,
+    spriteScale:1,
     groundThickness: 100,
-    playerXposition:300,
-    enemyXposition: 1400,
-    characterHeight:250,
-    characterWidth:70,
+    playerXposition:600,
+    enemyXposition: 4500,
+    characterHeight:600,
+    characterWidth:100,
   physics: {
     default: 'arcade',
     arcade: {
@@ -52,9 +51,10 @@ var game = new Phaser.Game(config);
 
 function preload ()
 {
-    game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
-    game.scale.setUserScale(window.innerHeight * window.devicePixelRatio/config.height, window.innerHeight * window.devicePixelRatio/config.height, 0, 0);
+  game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
+  game.scale.setUserScale((window.innerHeight * window.devicePixelRatio)/config.height, window.innerHeight * window.devicePixelRatio/config.height, 0, 0);
 
+  console.log('height:'+ window.innerHeight + '  pixelR:'+window.devicePixelRatio + ' scale:'+(window.innerHeight * window.devicePixelRatio)/config.height);
   this.load.image('logo', 'assets/UI/logo.png');
   //this.load.image('progressBar', 'assets/UI/logo.png');
   this.state.add('loadingScreen', loadState)
