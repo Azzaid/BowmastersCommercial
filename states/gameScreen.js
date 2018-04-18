@@ -25,15 +25,15 @@ var gameScreen = {
       ground.body.allowGravity = false;
       ground.body.immovable = true;
 
-    downloadButton = game.add.sprite(window.innerWidth/2/config.worldScale, config.height-config.groundThickness/3, 'downloadButton');
-    downloadButton.anchor.setTo(0.5, 1);
-    downloadButton.scale.setTo(config.spriteScale);
-    downloadButton.fixedToCamera = true;
+      this.downloadButton = game.add.sprite(window.innerWidth/2/config.worldScale, config.height-config.groundThickness/3, 'downloadButton');
+      this.downloadButton.anchor.setTo(0.5, 1);
+      this.downloadButton.scale.setTo(config.spriteScale);
+      this.downloadButton.fixedToCamera = true;
 
-    lifeBarHolder = game.add.sprite(window.innerWidth/2/config.worldScale, config.groundThickness/2, 'lifeBarHolder');
-    lifeBarHolder.anchor.setTo(0.5, 0);
-    lifeBarHolder.scale.setTo(config.spriteScale);
-    lifeBarHolder.fixedToCamera = true;
+    this.lifeBarHolder = game.add.sprite(window.innerWidth/2/config.worldScale, config.groundThickness/2, 'lifeBarHolder');
+      this.lifeBarHolder.anchor.setTo(0.5, 0);
+      this.lifeBarHolder.scale.setTo(config.spriteScale);
+      this.lifeBarHolder.fixedToCamera = true;
 
     player = game.add.spine(config.playerXposition, config.height-config.groundThickness, 'Thor');
     player.scale.setTo(config.spriteScale);
@@ -228,7 +228,7 @@ var gameScreen = {
             this.lightingSparks1.destroy();
             this.lightingSparks2.destroy();
               ash = game.add.sprite(enemy.x-config.characterWidth/2, enemy.y, 'Ash');
-              ash.anchor.setTo(0.5, 1);
+              ash.anchor.setTo(0.5);
             ash.scale.setTo(config.spriteScale);
           }, 800);
           setTimeout(()=>{gameScreen.showPlayerWin();}, 2000);
@@ -258,7 +258,7 @@ var gameScreen = {
                     true        //If the animation should loop or not
                 );
                 finishMode = true;
-                finishBanner = game.add.sprite(enemy.x+config.characterWidth/2, enemy.y+config.characterHeight+config.guiPadding, 'finish banner');
+                finishBanner = game.add.sprite(enemy.x+config.characterWidth/2, enemy.y-config.characterHeight-config.guiPadding, 'finish banner');
                 finishBanner.anchor.setTo(0.5,1);
                 finishBanner.scale.setTo(config.spriteScale);
                 setTimeout(()=>{
@@ -347,8 +347,8 @@ var gameScreen = {
         emitter = game.add.emitter(config.width/3, config.guiPadding*6, 200);
         emitter.width = config.width/2;
         emitter.makeParticles(['pink_confetti','purple_confetti']);
-        emitter.minParticleScale = 0.07;
-        emitter.maxParticleScale = 0.15;
+        emitter.minParticleScale = 0.07*config.spriteScale;
+        emitter.maxParticleScale = 0.15*config.spriteScale;
         emitter.minParticleSpeed.setTo(0.000001, 0.000001);
         emitter.maxParticleSpeed.setTo(0.00002, 0.00002);
         emitter.gravity = 0.000001;
@@ -358,6 +358,9 @@ var gameScreen = {
         victoryBanner.anchor.setTo(0.5,1);
         victoryBanner.scale.setTo(config.spriteScale*2);
         victoryBannerPopIn = game.add.tween(victoryBanner).to({y:config.guiPadding*8}, 800, 'Linear', true, 0, 0, false);
+
+        gameScreen.lifeBarHolder.destroy();
+        gameScreen.downloadButton.destroy();
 
       player.setAnimationByName(
         0,          //Track index
