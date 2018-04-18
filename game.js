@@ -5,6 +5,7 @@
 var config = {
   type: Phaser.AUTO,
   width: window.innerWidth/(window.innerHeight * window.devicePixelRatio/1900),
+  fullWorldWidth: 5000,
   height: 1900,
   worldScale: window.innerHeight * window.devicePixelRatio/1900,
     spriteScale:1,
@@ -13,12 +14,8 @@ var config = {
     enemyXposition: 4500,
     characterHeight:600,
     characterWidth:100,
-  physics: {
-    default: 'arcade',
-    arcade: {
-      gravity: { y: 1000 }
-    }
-  },
+  gravity: 1000,
+  cameraSmoothMovementMultiplyer: 0.1,
   state: {
     preload: preload,
     create: create

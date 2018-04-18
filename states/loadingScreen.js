@@ -21,12 +21,18 @@ var loadState = {
     game.load.image('hammer', 'assets/Character/Thor/hammer_thor.png');
     game.load.image('spear', 'assets/Character/Loki/upgrade_loki_spear.png');
     game.load.image('finish banner', 'assets/UI/finish_him.png');
-    game.load.image('lighting1', 'assets/FX/FX_Light_coil_L.png');
-    game.load.image('lighting2', 'assets/FX/FX_Light_coil_M.png');
-    game.load.image('lighting3', 'assets/FX/FX_Mjolnir_lightning_1.png');
-    game.load.image('lighting4', 'assets/FX/FX_Mjolnir_lightning_1a.png');
+    game.load.image('lightingSparks1', 'assets/FX/FX_Light_coil_L.png');
+    game.load.image('lightingSparks2', 'assets/FX/FX_Light_coil_M.png');
+    game.load.image('lightingStrikeStage1', 'assets/FX/FX_Mjolnir_lightning_1.png');
+    game.load.image('lightingStrikeStage2', 'assets/FX/FX_Mjolnir_lightning_1a.png');
     game.load.image('Ash', 'assets/FX/FX_Ash_pile_0.png');
     game.load.image('Loki icon', 'assets/UI/icon_upgrade_loki.png');
+    game.load.image('victoryBanner', 'assets/UI/VictoryBanner.png');
+    game.load.image('downloadButton', 'assets/UI/Install.png');
+    game.load.image('lifeBarHolder', 'assets/UI/LifeBar.png');
+
+
+
 
 
     game.load.spine('Thor', 'assets/Character/Thor/thor_odinson.json');
