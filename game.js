@@ -13,7 +13,7 @@ var config = {
   characterHeight:600,
   characterWidth:100,
   guiPadding: 100,
-  gravity: 2000,
+  gravity: 5000,
   enemyThrowAngle:40,
   cameraSmoothMovementMultiplyer: 0.1,
   initialEnemyHealth:100,
@@ -39,29 +39,18 @@ config.fullWorldWidth=config.backgroundWidth;
 config.worldScale =  window.innerHeight/config.height;
 config.width = window.innerWidth/config.worldScale;
 
-//constants representing game state and some of constants which i did not managed how to set them localy. As far as i see phaser demand this to be global.
-
-var tutorialModeOn = true;
-var enemyMoveInProgress = false;
-var playerAiming = false;
-var finishMode = false;
+//Global variables in case if i will ned to move everything on other game stage.
 var enemy = 0;
-var enemyHealh = 100;
 var player = 0;
-var enemyHitbox = 0;
 var playerWeapon=0;
-var mjolnirSwing =0;
 var enemyWeapon=0;
-var gugnirSwing = 0;
-var ground =0;
-var background = 0;
 
 var game = new Phaser.Game(config);
 
 function preload ()
 {
   game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
-  game.scale.setUserScale(window.innerHeight/config.height, window.innerHeight/config.height, 0, 0);
+  game.scale.setUserScale(config.worldScale, config.worldScale, 0, 0);
 
   this.load.image('logo', 'assets/UI/logo.png');
   //this.load.image('progressBar', 'assets/UI/logo.png');
