@@ -23,8 +23,14 @@ var loadState = {
 
     game.add.plugin(PhaserSpine.SpinePlugin);
 
-    game.load.image('background', 'assets/BG/bm_bg.png');
-    game.load.image('ground', 'assets/BG/bm_ground.png');
+    if (isMobile) {
+      game.load.image('background', 'assets/BG/bm_bg_mobile.png');
+      game.load.image('ground', 'assets/BG/bm_ground_mobile.png');
+    } else {
+      game.load.image('background', 'assets/BG/bm_bg.png');
+      game.load.image('ground', 'assets/BG/bm_ground.png');
+    };
+
     game.load.image('tutorialShadow', 'assets/BG/tutorialScene.png');
     game.load.image('tutorialHand', 'assets/UI/tutor_hand.png');
     game.load.image('hammer', 'assets/Character/Thor/hammer_thor.png');

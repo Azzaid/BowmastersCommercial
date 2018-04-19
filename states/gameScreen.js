@@ -21,15 +21,29 @@ var gameScreen = {
     game.input.onDown.add(this.startPlayerAiming);
     game.input.onUp.add(this.playerThrow);
 
-    this.backgroundFone = game.add.sprite(0,0,'background');
-    this.backgroundFone.scale.setTo(config.spriteScale);
+    this.background = game.add.sprite(0,0,'background');
+    if (isMobile) {
+      this.background.scale.setTo(config.spriteScale*2);
+    } else {
+      this.background.scale.setTo(config.spriteScale);
+    };
     if (config.width > config.backgroundWidth) {
-      this.additionalBackgroundFone = game.add.sprite(config.backgroundWidth,0,'background');
-      this.additionalBackgroundFone.scale.setTo(config.spriteScale);
+      this.additionalBackground = game.add.sprite(config.backgroundWidth,0,'background');
       this.additionalfloor = game.add.sprite(config.backgroundWidth,config.height-config.groundThickness,'ground');
-      this.additionalfloor.scale.setTo(config.spriteScale);
+      if (isMobile) {
+        this.additionalBackground.scale.setTo(config.spriteScale*2);
+        this.additionalfloor.scale.setTo(config.spriteScale*2);
+      } else {
+        this.additionalBackground.scale.setTo(config.spriteScale);
+        this.additionalfloor.scale.setTo(config.spriteScale);
+      };
     };
     this.floor = game.add.sprite(0,config.height-config.groundThickness,'ground');
+    if (isMobile) {
+      this.floor.scale.setTo(config.spriteScale*2);
+    } else {
+      this.floor.scale.setTo(config.spriteScale);
+    };
     this.floor.scale.setTo(config.spriteScale);
       game.physics.arcade.enable(this.floor);
     this.floor.body.enable=true;
