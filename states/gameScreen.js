@@ -17,8 +17,8 @@ var gameScreen = {
     game.physics.arcade.gravity.y = config.gravity;
 
     game.input.maxPointers = 1;
-    //game.input.onDown.add(this.showPlayerWin);
-    game.input.onDown.add(this.startPlayerAiming);
+    game.input.onDown.add(this.showPlayerWin);
+    //game.input.onDown.add(this.startPlayerAiming);
     game.input.onUp.add(this.playerThrow);
 
     this.background = game.add.sprite(0,0,'background');
@@ -49,7 +49,7 @@ var gameScreen = {
     this.floor.body.allowGravity = false;
     this.floor.body.immovable = true;
 
-      this.downloadButton = game.add.sprite(config.width/2, config.height-config.groundThickness/3, 'downloadButton');
+      this.downloadButton = game.add.sprite(config.width/2, config.height-config.guiPadding/3, 'downloadButton');
       this.downloadButton.anchor.setTo(0.5, 1);
       this.downloadButton.scale.setTo(config.spriteScale);
       this.downloadButton.fixedToCamera = true;
@@ -58,7 +58,11 @@ var gameScreen = {
     this.lifeBarGroup.fixedToCamera = true;
     lifeBarHolder = game.add.sprite(window.innerWidth/2/config.worldScale, config.groundThickness/2, 'lifeBarHolder', {}, this.lifeBarGroup);
     lifeBarHolder.anchor.setTo(0.5, 0);
-    lifeBarHolder.scale.setTo(config.spriteScale);
+    if (config.width < lifeBarHolder.width*1.2) {
+      lifeBarHolder.scale.setTo(config.spriteScale*0.7);
+    } else {
+      lifeBarHolder.scale.setTo(config.spriteScale);
+    };
     healthBarGraphic = game.add.graphics(0, 0);
     healthBarGraphic.beginFill(0xEA3100);
     healthBarGraphic.drawRoundedRect(0, 0, lifeBarHolder.width/4, lifeBarHolder.height/4, lifeBarHolder.height/2);
@@ -360,21 +364,39 @@ var gameScreen = {
     setTimeout(()=>{
         prizeScreenGroup = game.add.group();
 
+      prizeChest = game.add.sprite(config.width/6*8, config.height/2, 'prizeChest', {}, prizeScreenGroup);
+      prizeChest.anchor.setTo(0.5);
+
+      congratText = game.add.text(config.width/6*8, config.height/2-config.guiPadding*5, 'You got a prize', { font: "75px Arial", fill: "#ffffff", align: "center" }, prizeScreenGroup);
+      congratText.anchor.setTo(0.5);
+
+      victoryBanner = game.add.sprite(config.width/3, -config.groundThickness, 'victoryBanner');
+      victoryBanner.anchor.setTo(0.5,1);
+
+      playButton = game.add.sprite(config.width/6*8, config.height/2+config.guiPadding*5, 'play button', {}, prizeScreenGroup);
+      playButton.anchor.setTo(0.5);
+
+      if (prizeChest.width+config.guiPadding < config.width/3) {
+        prizeChest.scale.setTo(config.spriteScale);
+        congratText.scale.setTo(config.spriteScale);
+        playButton.scale.setTo(config.spriteScale);
+        victoryBanner.scale.setTo(config.spriteScale*2);
+      } else {
+        prizeChest.scale.setTo(config.spriteScale*0.7);
+        congratText.scale.setTo(config.spriteScale*0.7);
+        playButton.scale.setTo(config.spriteScale*0.7);
+        victoryBanner.scale.setTo(config.spriteScale*1.3);
+      };
+
       prizeScreen = game.add.graphics(config.width/6*7, 0, prizeScreenGroup);
       prizeScreen.beginFill(0xA645B6);
       prizeScreen.drawRect(0,0, config.width/6*3, config.height);
+      prizeScreen.beginFill(0xAFFFAF);
+      prizeScreen.drawCircle(config.width/6, config.height/2, prizeChest.width+config.guiPadding*2);
 
-      prizeChest = game.add.sprite(config.width/6*8, config.height/2, 'prizeChest', {}, prizeScreenGroup);
-      prizeChest.scale.setTo(config.spriteScale);
-      prizeChest.anchor.setTo(0.5);
-
-      congratText = game.add.text(config.width/6*8, config.height/2-config.guiPadding*4, 'You got a prize', { font: "75px Arial", fill: "#ffffff", align: "center" }, prizeScreenGroup);
-      congratText.scale.setTo(config.spriteScale);
-      congratText.anchor.setTo(0.5);
-
-      playButton = game.add.sprite(config.width/6*8, config.height/2+config.guiPadding*4, 'play button', {}, prizeScreenGroup);
-      playButton.scale.setTo(config.spriteScale);
-      playButton.anchor.setTo(0.5);
+      prizeChest.bringToTop();
+      congratText.bringToTop();
+      playButton.bringToTop();
 
       prizeScreenEaseIn  = game.add.tween(prizeScreenGroup).to({x:-(config.width/6*3)}, 800, 'Linear', true, 0, 0, false);
       prizeScreenEaseIn.start();
@@ -384,15 +406,12 @@ var gameScreen = {
         emitter.makeParticles(['confetti1', 'confetti2', 'confetti3', 'confetti4', 'confetti5']);
         emitter.minParticleScale = 3*config.spriteScale;
         emitter.maxParticleScale = 8*config.spriteScale;
-        emitter.minParticleSpeed.setTo(0.000001, 0.000001);
-        emitter.maxParticleSpeed.setTo(0.00002, 0.00002);
-        emitter.gravity = 0.000001;
-        emitter.flow(2000, 100, 10, -1);
+        emitter.minParticleSpeed.setTo(1, 1);
+        emitter.maxParticleSpeed.setTo(10, 10);
+        emitter.gravity = 10;
+        emitter.flow(1000, 100, 5, -1);
 
-        victoryBanner = game.add.sprite(config.width/3, -config.groundThickness, 'victoryBanner');
-        victoryBanner.anchor.setTo(0.5,1);
-        victoryBanner.scale.setTo(config.spriteScale*2);
-        victoryBannerPopIn = game.add.tween(victoryBanner).to({y:config.guiPadding*8}, 800, 'Linear', true, 0, 0, false);
+      victoryBannerPopIn = game.add.tween(victoryBanner).to({y:config.guiPadding*8}, 800, 'Linear', true, 0, 0, false);
 
         enemyWeapon.kill();
         gameScreen.lifeBarGroup.destroy();
