@@ -36,7 +36,7 @@ config.gravity=config.gravity*config.spriteScale;
 
 config.height = config.backgroundHeight+config.groundThickness;
 config.fullWorldWidth=config.backgroundWidth;
-config.worldScale =  window.innerHeight*window.devicePixelRatio/config.height;
+config.worldScale =  window.innerHeight/config.height;
 config.width = window.innerWidth/config.worldScale;
 
 //constants representing game state and some of constants which i did not managed how to set them localy. As far as i see phaser demand this to be global.
