@@ -17,8 +17,8 @@ var gameScreen = {
     game.physics.arcade.gravity.y = config.gravity;
 
     game.input.maxPointers = 1;
-    game.input.onDown.add(this.showPlayerWin);
-    //game.input.onDown.add(this.startPlayerAiming);
+    //game.input.onDown.add(this.showPlayerWin);
+    game.input.onDown.add(this.startPlayerAiming);
     game.input.onUp.add(this.playerThrow);
 
     this.background = game.add.sprite(0,0,'background');
