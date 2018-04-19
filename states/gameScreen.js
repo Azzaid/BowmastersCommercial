@@ -25,15 +25,26 @@ var gameScreen = {
       ground.body.allowGravity = false;
       ground.body.immovable = true;
 
-      this.downloadButton = game.add.sprite(window.innerWidth/2/config.worldScale, config.height-config.groundThickness/3, 'downloadButton');
+      this.downloadButton = game.add.sprite(config.width/2, config.height-config.groundThickness/3, 'downloadButton');
       this.downloadButton.anchor.setTo(0.5, 1);
       this.downloadButton.scale.setTo(config.spriteScale);
       this.downloadButton.fixedToCamera = true;
 
-    this.lifeBarHolder = game.add.sprite(window.innerWidth/2/config.worldScale, config.groundThickness/2, 'lifeBarHolder');
-      this.lifeBarHolder.anchor.setTo(0.5, 0);
-      this.lifeBarHolder.scale.setTo(config.spriteScale);
-      this.lifeBarHolder.fixedToCamera = true;
+    this.lifeBarGroup = game.add.group();
+    this.lifeBarGroup.fixedToCamera = true;
+    lifeBarHolder = game.add.sprite(window.innerWidth/2/config.worldScale, config.groundThickness/2, 'lifeBarHolder', {}, this.lifeBarGroup);
+    lifeBarHolder.anchor.setTo(0.5, 0);
+    lifeBarHolder.scale.setTo(config.spriteScale);
+    healthBarGraphic = game.add.graphics(0, 0);
+    healthBarGraphic.beginFill(0xEA3100);
+    healthBarGraphic.drawRoundedRect(0, 0, lifeBarHolder.width/4, lifeBarHolder.height/4, lifeBarHolder.height/2);
+    playerHealthBar = game.add.sprite(lifeBarHolder.x - lifeBarHolder.width/2.4, lifeBarHolder.y + lifeBarHolder.height/1.95, healthBarGraphic.generateTexture(), '', this.lifeBarGroup);
+    playerHealthBar.anchor.setTo(0, 0.5);
+    this.enemyHealthBar = game.add.sprite(lifeBarHolder.x + lifeBarHolder.width/2.35, lifeBarHolder.y + lifeBarHolder.height/1.95, healthBarGraphic.generateTexture(), '', this.lifeBarGroup);
+    this.enemyHealthBar.anchor.setTo(1, 0.5);
+    this.enemyLifeBarCropRect = new Phaser.Rectangle(0, 0, this.enemyHealthBar.width, this.enemyHealthBar.height);
+    this.enemyHealthBar.crop(this.enemyLifeBarCropRect);
+    healthBarGraphic.destroy();
 
     player = game.add.spine(config.playerXposition, config.height-config.groundThickness, 'Thor');
     player.scale.setTo(config.spriteScale);
@@ -53,6 +64,7 @@ var gameScreen = {
       "idle_apple",     //Animation's name
       true        //If the animation should loop or not
     );
+    enemy.health = config.initialEnemyHealth;
     enemyHitbox = game.add.graphics(enemy.x, enemy.y);
       enemyHitbox.anchor.setTo(1, 1);
       enemyHitbox.beginFill('#00ff00', 0);
@@ -69,7 +81,6 @@ var gameScreen = {
       for (i=0; i<config.width/config.guiPadding/2; i++) {
           this.tutorialShadow.drawCircle(player.x, player.y-config.characterHeight/2, config.characterHeight*1.5+config.guiPadding*(2+i*4));
       };
-
     this.tutorialText = game.add.text(config.playerXposition, config.height-config.groundThickness-config.characterHeight-config.guiPadding*2, 'Tap & Drag', { font: "75px Arial", fill: "#ffffff", align: "center" });
     this.tutorialText.anchor.setTo(0.5, 1);
     this.tutorialText.scale.setTo(config.spriteScale);
@@ -80,7 +91,6 @@ var gameScreen = {
 
       this.enemyDistanceMeterGroup = game.add.group();
       this.enemyDistanceMeterGroup.fixedToCamera=true;
-
       enemyDistanceMeter = game.add.sprite(config.width-config.guiPadding, config.height-config.groundThickness-config.characterHeight, 'Loki icon',{}, this.enemyDistanceMeterGroup);
       enemyDistanceMeter.scale.setTo(config.spriteScale/2);
       enemyDistanceMeter.anchor.setTo(0.5, 0.5);
@@ -196,13 +206,15 @@ var gameScreen = {
     enemyHitHandler: function () {
         game.camera.follow(enemy, Phaser.Camera.FOLLOW_LOCKON, config.cameraSmoothMovementMultiplyer, config.cameraSmoothMovementMultiplyer);
       if (!finishMode) {
+          enemy.health -= config.heathLostPerHit;
+        gameScreen.enemyLifeBarCropRect.x += gameScreen.enemyLifeBarCropRect.width*config.heathLostPerHit/config.initialEnemyHealth;
+        gameScreen.enemyHealthBar.updateCrop();
           enemy.setAnimationByName(
               0,          //Track index
               "fall",     //Animation's name
               false        //If the animation should loop or not
           );
       } else {
-
           enemy.setAnimationByName(
               0,          //Track index
               "death_by_shock",     //Animation's name
@@ -237,9 +249,8 @@ var gameScreen = {
 
     },
     enemyTurn: function (trackIndex, event) {
-      enemyHealh-=50;
         if (event.data.name == 'Got_up') {
-            if (enemyHealh >= 50) {
+            if (enemy.health > 0) {
                 enemy.setAnimationByName(
                     0,          //Track index
                     "grenade_draw",     //Animation's name
@@ -293,7 +304,7 @@ var gameScreen = {
       let throwSpeed = Math.sqrt(((enemy.x - player.x-config.characterWidth*6) * game.physics.arcade.gravity.y)/Math.sin(throwAngle*2));
       enemyWeapon.body.velocity.set(-throwSpeed*Math.cos(throwAngle), -throwSpeed*Math.sin(throwAngle));
         game.camera.follow(enemyWeapon);
-        gugnirRotate = game.add.tween(enemyWeapon).to({angle:-110}, (enemy.x - player.x+config.characterWidth*6)/throwSpeed*Math.cos(throwAngle)*1000, 'Linear', true, 0, 0);
+        gugnirRotate = game.add.tween(enemyWeapon).to({angle:-110}, (enemy.x - player.x-config.characterWidth*6)/(throwSpeed*Math.cos(throwAngle))*1000/config.spriteScale, 'Linear', true, 0, 0);
     },
     groundHitHandler: function () {
         enemyWeapon.body.allowGravity = false;
@@ -359,7 +370,7 @@ var gameScreen = {
         victoryBanner.scale.setTo(config.spriteScale*2);
         victoryBannerPopIn = game.add.tween(victoryBanner).to({y:config.guiPadding*8}, 800, 'Linear', true, 0, 0, false);
 
-        gameScreen.lifeBarHolder.destroy();
+        gameScreen.lifeBarGroup.destroy();
         gameScreen.downloadButton.destroy();
 
       player.setAnimationByName(

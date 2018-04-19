@@ -16,13 +16,13 @@ var config = {
   gravity: 2000,
   enemyThrowAngle:40,
   cameraSmoothMovementMultiplyer: 0.1,
+  initialEnemyHealth:100,
+  heathLostPerHit:50,
   state: {
     preload: preload,
     create: create
   }
 };
-
-config.spriteScale = config.spriteScale*window.devicePixelRatio;
 
 config.backgroundWidth=config.backgroundWidth*config.spriteScale;
 config.backgroundHeight=config.backgroundHeight*config.spriteScale;
@@ -36,8 +36,8 @@ config.gravity=config.gravity*config.spriteScale;
 
 config.height = config.backgroundHeight+config.groundThickness;
 config.fullWorldWidth=config.backgroundWidth;
-config.worldScale =  window.visualViewport.height/config.height;
-config.width = window.visualViewport.width/config.worldScale;
+config.worldScale =  window.innerHeight*window.devicePixelRatio/config.height;
+config.width = window.innerWidth/config.worldScale;
 
 //constants representing game state and some of constants which i did not managed how to set them localy. As far as i see phaser demand this to be global.
 
@@ -48,18 +48,12 @@ var finishMode = false;
 var enemy = 0;
 var enemyHealh = 100;
 var player = 0;
-var playeHealt = 100;
 var enemyHitbox = 0;
-var dragStartPosition = [0, 0];
 var playerWeapon=0;
 var mjolnirSwing =0;
 var enemyWeapon=0;
 var gugnirSwing = 0;
-var aimLine = [];
-var aimAngle = [];
 var ground =0;
-var enemyDistanceMeter = 0;
-var enemyDistanceText =0;
 var background = 0;
 
 var game = new Phaser.Game(config);
