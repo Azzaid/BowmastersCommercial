@@ -376,7 +376,7 @@ var gameScreen = {
       playButton = game.add.sprite(config.width/6*8, config.height/2+config.guiPadding*5, 'play button', {}, prizeScreenGroup);
       playButton.anchor.setTo(0.5);
 
-      if (prizeChest.width+config.guiPadding < config.width/3) {
+      if (victoryBanner.width+config.guiPadding < config.width/2) {
         prizeChest.scale.setTo(config.spriteScale);
         congratText.scale.setTo(config.spriteScale);
         playButton.scale.setTo(config.spriteScale);
@@ -391,8 +391,8 @@ var gameScreen = {
       prizeScreen = game.add.graphics(config.width/6*7, 0, prizeScreenGroup);
       prizeScreen.beginFill(0xA645B6);
       prizeScreen.drawRect(0,0, config.width/6*3, config.height);
-      prizeScreen.beginFill(0xAFFFAF);
-      prizeScreen.drawCircle(config.width/6, config.height/2, prizeChest.width+config.guiPadding*2);
+      prizeScreen.beginFill(0xe579a4);
+      prizeScreen.drawCircle(config.width/6, config.height/2, prizeChest.width+config.guiPadding);
 
       prizeChest.bringToTop();
       congratText.bringToTop();
