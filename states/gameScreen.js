@@ -44,7 +44,6 @@ var gameScreen = {
     } else {
       this.floor.scale.setTo(config.spriteScale);
     };
-    this.floor.scale.setTo(config.spriteScale);
       game.physics.arcade.enable(this.floor);
     this.floor.body.enable=true;
     this.floor.body.allowGravity = false;
