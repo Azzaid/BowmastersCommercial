@@ -4,7 +4,7 @@
 
 var config = {
   type: Phaser.CANVAS,
-  spriteScale:0.5,
+  spriteScale:1,
   backgroundWidth:5000,
   backgroundHeight:1900,
   groundThickness: 250,
