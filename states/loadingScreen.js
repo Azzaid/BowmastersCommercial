@@ -5,7 +5,7 @@
 var loadState = {
   preload: function () {
     
-    var logo = game.add.sprite(config.width / 2, config.guiPadding * 2, 'logo');
+    logo = game.add.sprite(config.width / 2, config.guiPadding * 2, 'logo');
     logo.anchor.setTo(0.5, 0);
     logo.scale.setTo(config.spriteScale);
     
@@ -35,17 +35,12 @@ var loadState = {
     game.load.image('lightingStrikeStage2', 'assets/FX/FX_Mjolnir_lightning_1a.png');
     game.load.image('Ash', 'assets/FX/FX_Ash_pile_0.png');
     game.load.image('Loki icon', 'assets/UI/icon_upgrade_loki.png');
+    game.load.image('Thor icon', 'assets/UI/icon_thor_odinson.png');
     game.load.image('victoryBanner', 'assets/UI/VictoryBanner.png');
-    game.load.image('downloadButton', 'assets/UI/Install.png');
-    game.load.image('lifeBarHolder', 'assets/UI/LifeBar.png');
     game.load.image('enemy pointer', 'assets/UI/arrow.png');
     game.load.image('prizeChest', 'assets/UI/chest.png');
-    game.load.image('play button', 'assets/UI/PlayNow.png');
-    game.load.image('confetti1', 'assets/FX/confetti/pixel_blue.png');
-    game.load.image('confetti2', 'assets/FX/confetti/pixel_green.png');
-    game.load.image('confetti3', 'assets/FX/confetti/pixel_red.png');
-    game.load.image('confetti4', 'assets/FX/confetti/pixel_white.png');
-    game.load.image('confetti5', 'assets/FX/confetti/pixel_yellow.png');
+    game.load.image('star', 'assets/FX/star.png');
+    
     
     game.load.spine('Thor', 'assets/Character/Thor/thor_odinson.json');
     game.load.spine('Loki', 'assets/Character/Loki/loki_upgraded.json');

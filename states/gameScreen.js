@@ -31,20 +31,36 @@ var gameScreen = {
     
     this.lifeBarGroup = game.add.group();
     this.lifeBarGroup.fixedToCamera = true;
-    lifeBarHolder = game.add.sprite(config.width/2, config.guiPadding, 'lifeBarHolder', {}, this.lifeBarGroup);
-    lifeBarHolder.anchor.setTo(0.5, 0);
-    lifeBarHolder.scale.setTo(config.spriteScale);
     
+    lifebarLogo = game.add.sprite(config.width/2, config.guiPadding, 'logo', {}, this.lifeBarGroup);
+    lifebarLogo.anchor.setTo(0.5, 0);
+    lifebarLogo.scale.setTo(config.spriteScale/1.6);
+  
+    healthHolderGraphic = game.add.graphics(lifebarLogo.x, lifebarLogo.y, this.lifeBarGroup);
+    healthHolderGraphic.beginFill(0xA5279F);
+    healthHolderGraphic.drawRect(-lifebarLogo.width*1.5, lifebarLogo.height*0.3, lifebarLogo.width*3, config.guiPadding*2);
+    healthHolderGraphic.beginFill(0x000000, 0.4);
+    healthHolderGraphic.drawRoundedRect(-lifebarLogo.width*1.5, lifebarLogo.height*0.37, lifebarLogo.width*0.9, config.guiPadding*1.3, config.guiPadding*0.65);
+    healthHolderGraphic.drawRoundedRect(lifebarLogo.width*0.6, lifebarLogo.height*0.37, lifebarLogo.width*0.9, config.guiPadding*1.3, config.guiPadding*0.65);
+  
     healthBarGraphic = game.add.graphics(0, 0);
     healthBarGraphic.beginFill(0xEA3100);
-    healthBarGraphic.drawRoundedRect(0, 0, lifeBarHolder.width / 4, lifeBarHolder.height / 4, lifeBarHolder.height / 2);
-    playerHealthBar = game.add.sprite(lifeBarHolder.x - lifeBarHolder.width / 2.4, lifeBarHolder.y + lifeBarHolder.height / 1.95, healthBarGraphic.generateTexture(), '', this.lifeBarGroup);
-    playerHealthBar.anchor.setTo(0, 0.5);
-    this.enemyHealthBar = game.add.sprite(lifeBarHolder.x + lifeBarHolder.width / 2.35, lifeBarHolder.y + lifeBarHolder.height / 1.95, healthBarGraphic.generateTexture(), '', this.lifeBarGroup);
-    this.enemyHealthBar.anchor.setTo(1, 0.5);
+    healthBarGraphic.drawRoundedRect(0, 0, lifebarLogo.width*0.9, config.guiPadding*1.3, config.guiPadding*0.65);
+    playerHealthBar = game.add.sprite(lifebarLogo.x  - lifebarLogo.width*1.5, lifebarLogo.y + lifebarLogo.height*0.37, healthBarGraphic.generateTexture(), '', this.lifeBarGroup);
+    this.enemyHealthBar = game.add.sprite(lifebarLogo.x + lifebarLogo.width*1.5, lifebarLogo.y + lifebarLogo.height*0.37, healthBarGraphic.generateTexture(), '', this.lifeBarGroup);
+    this.enemyHealthBar.anchor.setTo(1, 0);
     this.enemyLifeBarCropRect = new Phaser.Rectangle(0, 0, this.enemyHealthBar.width, this.enemyHealthBar.height);
     this.enemyHealthBar.crop(this.enemyLifeBarCropRect);
     healthBarGraphic.destroy();
+    
+    lifeHolderPlayerPortrait = game.add.sprite(lifebarLogo.x-lifebarLogo.width*1.5, lifebarLogo.y+lifebarLogo.height*0.2, 'Thor icon', {}, this.lifeBarGroup);
+    lifeHolderPlayerPortrait.anchor.setTo(0.5, 0);
+    lifeHolderPlayerPortrait.scale.setTo(config.spriteScale/1.4);
+    lifeHolderEnemyPortrait = game.add.sprite(lifebarLogo.x+lifebarLogo.width*1.5, lifebarLogo.y+lifebarLogo.height*0.2, 'Loki icon', {}, this.lifeBarGroup);
+    lifeHolderEnemyPortrait.anchor.setTo(0.5, 0);
+    lifeHolderEnemyPortrait.scale.setTo(config.spriteScale/1.4);
+  
+    lifebarLogo.bringToTop();
     
     player = game.add.spine(config.playerXposition, config.groundLevel, 'Thor');
     player.scale.setTo(config.spriteScale);
@@ -102,13 +118,22 @@ var gameScreen = {
     
     this.enemyDistanceMeterGroup = game.add.group();
     this.enemyDistanceMeterGroup.fixedToCamera = true;
-    enemyDistanceMeter = game.add.sprite(config.width - config.guiPadding, config.groundLevel - config.characterHeight, 'Loki icon', {}, this.enemyDistanceMeterGroup);
-    enemyDistanceMeter.scale.setTo(config.spriteScale / 2);
-    enemyDistanceMeter.anchor.setTo(0.5, 0.5);
-    enemyDistanceMeter = game.add.sprite(config.width, config.groundLevel - config.characterHeight, 'enemy pointer', {}, this.enemyDistanceMeterGroup);
-    enemyDistanceMeter.scale.setTo(config.spriteScale * 2);
-    enemyDistanceMeter.anchor.setTo(1, 0.5);
-    this.enemyDistanceText = game.add.text(config.width - config.guiPadding, config.groundLevel - config.characterHeight + config.guiPadding / 2, '' + (enemy.x - game.camera.x - window.innerWidth / config.worldScale / 2), {
+    
+    enemyDistanceIcon = game.add.sprite(config.width - config.guiPadding*2, config.groundLevel - config.characterHeight/2, 'Loki icon', {}, this.enemyDistanceMeterGroup);
+    enemyDistanceIcon.scale.setTo(config.spriteScale/1.4);
+    enemyDistanceIcon.anchor.setTo(1, 0);
+  
+    enemyDistanceUnderlay = game.add.graphics(enemyDistanceIcon.x - enemyDistanceIcon.width*1.5, config.groundLevel - config.characterHeight/2);
+    enemyDistanceUnderlay.beginFill(0x813A86);
+    enemyDistanceUnderlay.drawRoundedRect(0, 0, enemyDistanceIcon.width*1.5, enemyDistanceIcon.width*1.5, enemyDistanceIcon.width/2);
+  
+    enemyDistanceIcon.bringToTop();
+    
+    enemyDistanceArrow = game.add.sprite(config.width, config.groundLevel - config.characterHeight/2, 'enemy pointer', {}, this.enemyDistanceMeterGroup);
+    enemyDistanceArrow.scale.setTo(config.spriteScale * 2);
+    enemyDistanceArrow.anchor.setTo(0, 0.5);
+    
+    this.enemyDistanceText = game.add.text(config.width - config.guiPadding, config.groundLevel - config.characterHeight + config.guiPadding / 2, '' + (enemy.x - game.camera.x - window.innerWidth / config.worldScale / 500) + ' m', {
       font: "75px Arial",
       fill: "#ffffff",
       align: "center"
@@ -148,7 +173,7 @@ var gameScreen = {
         gameScreen.enemyDistanceMeterGroup.revive();
       }
       ;
-      gameScreen.enemyDistanceText.text = '' + Math.floor(enemy.x - game.camera.x - window.innerWidth / config.worldScale);
+      gameScreen.enemyDistanceText.text = '' + Math.floor(enemy.x - game.camera.x - window.innerWidth / config.worldScale / 500) + ' m';
     } else {
       if (gameScreen.enemyDistanceMeterGroup.alive) {
         gameScreen.enemyDistanceMeterGroup.kill();
@@ -370,42 +395,100 @@ var gameScreen = {
     
     setTimeout(() => {
       prizeScreenGroup = game.add.group();
+  
+      prizeChest = game.add.sprite(config.width / 4 *5, config.height / 2 - config.guiPadding, 'prizeChest', {}, prizeScreenGroup);
+      prizeChest.anchor.setTo(0.5, 0);
+  
+      prizeScreenScale = Math.min((config.height/2/(prizeChest.height)/config.spriteScale),(config.width/2/(prizeChest.width+config.guiPadding*2)/config.spriteScale));
+  
+      prizeChest.scale.setTo(prizeScreenScale);
       
-      prizeChest = game.add.sprite(config.width / 6 * 8, config.height / 2, 'prizeChest', {}, prizeScreenGroup);
-      prizeChest.anchor.setTo(0.5);
-      
-      congratText = game.add.text(config.width / 6 * 8, config.height / 2 - config.guiPadding * 5, 'You got a prize', {
-        font: "75px Arial",
+      playButtonText = game.add.text(config.width / 4 * 5, prizeChest.y + prizeChest.height + config.guiPadding*1.5, 'PLAY NOW', {
+        font: config.guiPadding + "px Arial",
         fill: "#ffffff",
         align: "center"
       }, prizeScreenGroup);
-      congratText.anchor.setTo(0.5);
+      playButtonText.setShadow(3, 3, 'rgba(0,0,0,0.7)', 15);
+      playButtonText.anchor.setTo(0.5, 0);
+      playButtonText.scale.setTo(prizeScreenScale);
+  
+      playButtonGraphic = game.add.graphics(0,0);
+      playButtonGraphic.beginFill(0xFFFFFF);
+      playButtonGraphic.drawRoundedRect(0, 0, config.guiPadding*7, config.guiPadding*2, config.guiPadding*2);
+      playButtonGraphic.beginFill(0x08C9D8);
+      playButtonGraphic.drawRoundedRect(config.guiPadding/4, config.guiPadding/4, config.guiPadding*6.5, config.guiPadding*1.5, config.guiPadding*1.5);
       
-      victoryBanner = game.add.sprite(config.width / 3, -config.groundThickness, 'victoryBanner');
-      victoryBanner.anchor.setTo(0.5, 1);
+      playButton = game.add.sprite(config.width / 4 * 5, prizeChest.y + prizeChest.height + config.guiPadding, playButtonGraphic.generateTexture(), {}, prizeScreenGroup);
+      playButton.anchor.setTo(0.5, 0);
+      playButtonGraphic.destroy();
+      playButton.scale.setTo(prizeScreenScale);
+  
+      congratText = game.add.text(config.width / 4 * 5, prizeChest.y - config.guiPadding/2, 'You got a prize!', {
+        font: config.guiPadding + "px Arial",
+        fill: "#ffffff",
+        align: "center"
+      }, prizeScreenGroup);
+      congratText.anchor.setTo(0.5, 1);
+      congratText.scale.setTo(prizeScreenScale);
       
-      playButton = game.add.sprite(config.width / 6 * 8, config.height / 2 + config.guiPadding * 5, 'play button', {}, prizeScreenGroup);
-      playButton.anchor.setTo(0.5);
+      logo = game.add.sprite(config.width / 4 *5, prizeChest.y - config.guiPadding*2.5, 'logo', {}, prizeScreenGroup);
+      logo.anchor.setTo(0.5, 1);
+      logo.scale.setTo(prizeScreenScale);
       
-        prizeChest.scale.setTo(config.spriteScale);
-        congratText.scale.setTo(config.spriteScale);
-        playButton.scale.setTo(config.spriteScale);
-        victoryBanner.scale.setTo(config.spriteScale * 2);
-      
-      prizeScreen = game.add.graphics(config.width / 6 * 7, 0, prizeScreenGroup);
+      prizeScreen = game.add.graphics(config.width, 0, prizeScreenGroup);
       prizeScreen.beginFill(0xA645B6);
-      prizeScreen.drawRect(0, 0, config.width / 6 * 3, config.height);
-      prizeScreen.beginFill(0xe579a4);
-      prizeScreen.drawCircle(config.width / 6, config.height / 2, prizeChest.width + config.guiPadding);
+      prizeScreen.drawRect(config.guiPadding, 0, config.width/2, config.height);
+      for (i=0; i<config.height/config.guiPadding; i++) {
+        prizeScreen.drawPolygon([[config.guiPadding, i*config.guiPadding],[config.guiPadding/2, i*config.guiPadding + config.guiPadding/2],[config.guiPadding, (i+1)*config.guiPadding]])
+      };
       
+      
+      chestHalo = game.add.graphics(prizeChest.x, prizeChest.y+prizeChest.height/2, prizeScreenGroup);
+      chestHalo.beginFill(0xD62FB3);
+      chestHalo.drawCircle(0, 0, prizeChest.width*0.9);
+      chestHalo.beginFill(0xF54397);
+      chestHalo.drawCircle(0, 0, prizeChest.width*0.8);
+      chestHalo.beginFill(0xD62FB3);
+      chestHalo.drawCircle(0, 0, prizeChest.width*0.7);
+      chestHalo.beginFill(0xF54397);
+      chestHalo.drawCircle(0, 0, prizeChest.width*0.6);
+      chestHalo.beginFill(0xD62FB3);
+      chestHalo.drawCircle(0, 0, prizeChest.width*0.5);
+      chestHaloShine = game.add.tween(chestHalo.scale).to({x:1.4, y:1.4}, 800, 'Linear', true, 0, -1, true);
+  
+      congratTextUnderlay = game.add.graphics(congratText.x - congratText.width/1.7 ,congratText.y - congratText.height*1.1, prizeScreenGroup);
+      congratTextUnderlay.beginFill(0x7A0578);
+      congratTextUnderlay.drawRoundedRect(0, 0, congratText.width*1.15, congratText.height*1.1, congratText.height*0.55);
+      
+      logo.bringToTop();
       prizeChest.bringToTop();
       congratText.bringToTop();
       playButton.bringToTop();
+      playButtonText.bringToTop();
+  
+      chestSparksEmiter = game.add.emitter(config.width / 4 *5, prizeChest.y + prizeChest.height/2, 100, prizeScreenGroup);
+      chestSparksEmiter.width = prizeChest.width + config.guiPadding;
+      chestSparksEmiter.height = prizeChest.height + config.guiPadding;
+      chestSparksEmiter.makeParticles(['star']);
+      chestSparksEmiter.minParticleScale = 0.8 * config.spriteScale;
+      chestSparksEmiter.maxParticleScale = 3 * config.spriteScale;
+      chestSparksEmiter.minParticleSpeed.setTo(0, 0);
+      chestSparksEmiter.maxParticleSpeed.setTo(0, 0);
+      chestSparksEmiter.gravity = -config.gravity;
+      chestSparksEmiter.setAlpha(0.7, 1);
+      chestSparksEmiter.start(false, 500, 150);
       
-      prizeScreenEaseIn = game.add.tween(prizeScreenGroup).to({x: -(config.width / 6 * 3)}, 800, 'Linear', true, 0, 0, false);
-      prizeScreenEaseIn.start();
+      prizeScreenGroup.add(chestSparksEmiter);
       
-      emitter = game.add.emitter(config.width / 3, config.guiPadding * 6, 400);
+      prizeScreenEaseIn = game.add.tween(prizeScreenGroup).to({x: -(config.width / 2)}, 800, 'Linear', true, 0, 0, false);
+  
+      victoryBanner = game.add.sprite(config.width / 4, config.height/9, 'victoryBanner');
+      victoryBanner.anchor.setTo(0.5, 0);
+      finishScale = (config.width/2-config.guiPadding)/victoryBanner.width;
+      victoryBanner.scale.setTo(0.1);
+      victoryBannerPopIn = game.add.tween(victoryBanner.scale).to({x:finishScale , y:finishScale}, 1500, Phaser.Easing.Elastic.Out, true, 0, 0, false);
+      
+      emitter = game.add.emitter(config.width / 3, config.guiPadding * 6, 100);
       emitter.width = config.width / 2;
       emitter.makeParticles(['confetti1', 'confetti2', 'confetti3', 'confetti4', 'confetti5']);
       emitter.minParticleScale = 3 * config.spriteScale;
@@ -413,10 +496,10 @@ var gameScreen = {
       emitter.minParticleSpeed.setTo(1, 1);
       emitter.maxParticleSpeed.setTo(10, 10);
       emitter.gravity = 10;
-      emitter.flow(1000, 100, 5, -1);
-      
-      victoryBannerPopIn = game.add.tween(victoryBanner).to({y: config.guiPadding * 8}, 800, 'Linear', true, 0, 0, false);
-      
+      //emitter.flow(1000, 250, 5, -1);
+  
+  
+  
       enemyWeapon.kill();
       gameScreen.lifeBarGroup.destroy();
       

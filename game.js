@@ -4,11 +4,10 @@
 
 var config = {
   type: Phaser.AUTO,
-  spriteScale: 1,
+  spriteScale: 1.5,
   width: 2000,
   groundLevel: 1900,
   groundThickness: 200,
-  fullWorldWidth: 5000,
   enemyXposition: 4500,
   characterHeight: 650,
   characterWidth: 100,
@@ -24,6 +23,9 @@ var config = {
   },
 };
 
+config.characterHeight = config.characterHeight * config.spriteScale;
+config.characterWidth = config.characterWidth * config.spriteScale;
+
 config.worldScale = window.innerWidth / config.width;
 config.height = window.innerHeight / config.worldScale;
 if ((config.groundLevel + config.groundThickness) > config.height) {
@@ -31,7 +33,7 @@ if ((config.groundLevel + config.groundThickness) > config.height) {
   config.height = (config.groundLevel + config.groundThickness);
   config.width = window.innerWidth / config.worldScale;
 };
-config.playerXposition = config.width / 2;
+config.playerXposition = config.width / 4 + config.characterWidth/2;
 config.enemyXposition = config.playerXposition + Math.max(config.width, config.height);
 config.groundThickness = Math.max(config.height - config.groundLevel*config.worldScale, config.groundThickness);
 
