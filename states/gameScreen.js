@@ -19,11 +19,14 @@ var gameScreen = {
     game.input.onDown.add(this.startPlayerAiming);
     game.input.onUp.add(this.playerThrow);
     
-    this.background = game.add.tileSprite(0, 0, config.worldWidth, config.worldHeight, 'background');
+    this.background = game.add.tileSprite(0, 0, config.worldWidth, config.groundLevel, 'background');
     this.background.scale.setTo(config.spriteScale * 2);
    
-    this.ground = game.add.tileSprite(0, config.groundLevel, config.worldWidth, config.worldHeight, 'ground');
+    this.ground = game.add.tileSprite(0, config.groundLevel, config.worldWidth, config.groundThickness*2, 'ground');
     this.ground.scale.setTo(config.spriteScale * 2);
+  
+    underground = game.add.tileSprite(0, config.groundLevel+config.groundThickness*2, config.worldWidth, config.worldHeight - config.groundThickness - config.groundLevel, 'underground');
+    underground.scale.setTo(config.spriteScale * 2);
     
     game.physics.arcade.enable(this.ground);
     this.ground.body.enable = true;
@@ -133,7 +136,7 @@ var gameScreen = {
     enemyDistanceArrow.anchor.setTo(0, 0.5);
     
     this.enemyDistanceText = game.add.text(enemyDistanceIcon.x, enemyDistanceIcon.y+enemyDistanceIcon.height, '' + Math.floor((enemy.x - game.camera.x - config.width) / 50) + ' m', {
-      font: "75px Arial",
+      font: enemyDistanceIcon.height/1.3 + "px Arial",
       fill: "#ffffff",
       align: "center"
     }, this.enemyDistanceMeterGroup);
@@ -310,6 +313,10 @@ var gameScreen = {
         enemyWeapon.scale.setTo(config.spriteScale);
         enemyWeapon.angle = -90;
         this.gugnirSwing = game.add.tween(enemyWeapon).to({angle: -70}, 2000, 'Linear', true, 0, 1, false);
+        groundStuckCropRectangle = game.add.graphics(player.x, 0);
+        groundStuckCropRectangle.beginFill(0xFFFFFF);
+        groundStuckCropRectangle.drawRect(0,0, config.worldWidth, config.groundLevel + config.groundThickness/2);
+        enemyWeapon.mask = groundStuckCropRectangle;
         setTimeout(() => {
           this.enemyThrow()
         }, 2000);
@@ -322,7 +329,8 @@ var gameScreen = {
         gameScreen.finishMode = true;
         finishBanner = game.add.sprite(enemy.x - config.characterWidth / 2, enemy.y - config.characterHeight - config.guiPadding, 'finish banner');
         finishBanner.anchor.setTo(0.5, 1);
-        finishBanner.scale.setTo(config.spriteScale);
+        finishBanner.scale.setTo(0.1);
+        finishBannerPopIn = game.add.tween(finishBanner.scale).to({x:config.spriteScale , y:config.spriteScale}, 1500, Phaser.Easing.Elastic.Out, true, 0, 0, false);
         setTimeout(() => {
           finishBanner.destroy();
           game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
@@ -393,8 +401,8 @@ var gameScreen = {
   
       prizeChest.scale.setTo(prizeScreenScale);
       
-      playButtonText = game.add.text(config.width / 4 * 5, prizeChest.y + prizeChest.height*1.2, 'PLAY NOW', {
-        font: prizeChest.height/2 + "px Arial",
+      playButtonText = game.add.text(config.width / 4 * 5, prizeChest.y + prizeChest.height*1.23, 'PLAY NOW', {
+        font: prizeChest.height/2.5 + "px sans-serif",
         fill: "#ffffff",
         align: "center"
       }, prizeScreenGroup);
@@ -404,9 +412,9 @@ var gameScreen = {
   
       playButtonGraphic = game.add.graphics(0,0);
       playButtonGraphic.beginFill(0xFFFFFF);
-      playButtonGraphic.drawRoundedRect(0, 0, playButtonText.width*2.3, playButtonText.height*2.3,  playButtonText.height*1.15);
+      playButtonGraphic.drawRoundedRect(0, 0, playButtonText.width*2.6, playButtonText.height*3.3,  playButtonText.height*1.65);
       playButtonGraphic.beginFill(0x08C9D8);
-      playButtonGraphic.drawRoundedRect(playButtonText.width*0.05, playButtonText.height*0.05, playButtonText.width*2.2, playButtonText.height*2.2, playButtonText.height*1.1);
+      playButtonGraphic.drawRoundedRect(playButtonText.width*0.05, playButtonText.height*0.2, playButtonText.width*2.5, playButtonText.height*2.9, playButtonText.height*1.45);
       
       playButton = game.add.sprite(config.width / 4 * 5, prizeChest.y + prizeChest.height*1.15, playButtonGraphic.generateTexture(), {}, prizeScreenGroup);
       playButton.anchor.setTo(0.5, 0);
@@ -414,7 +422,7 @@ var gameScreen = {
       playButton.scale.setTo(prizeScreenScale);
   
       congratText = game.add.text(config.width / 4 * 5, prizeChest.y - config.guiPadding/2, 'You got a prize!', {
-        font: prizeChest.height/2.3 + "px Arial",
+        font: prizeChest.height/2.3 + "px sans-serif",
         fill: "#ffffff",
         align: "center"
       }, prizeScreenGroup);
@@ -486,12 +494,14 @@ var gameScreen = {
       emitter.width = victoryBanner.width*finishScale*10;
       emitter.makeParticles(confetti.generateTexture());
       emitter.minParticleScale = 1;
-      emitter.maxParticleScale = 3;
+      emitter.maxParticleScale = 2;
       emitter.minParticleSpeed.setTo(1, 1);
       emitter.maxParticleSpeed.setTo(10, 10);
-      emitter.gravity = 50-config.gravity;
-      emitter.forEach(function(particle) {particle.tint = (Math.random()*0xffffff)});
-      emitter.flow(5000, 500, 5, -1);
+      emitter.gravity = 100-config.gravity;
+    tintList = [0xFFFF00, 0xFF0000, 0xFF00FF, 0x99FF00, 0x00FFCC, 0xFF6633];
+    tint=Math.random()*100;
+      emitter.forEach(function(particle) {particle.tint = (tintList[Math.floor(Math.random()*(tintList.length))])});
+      emitter.flow(5000, 500, 3, -1);
 
       enemyWeapon.kill();
       gameScreen.lifeBarGroup.destroy();

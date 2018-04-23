@@ -2913,7 +2913,7 @@ var PhaserSpine;
                             });
                         }
                     });
-                    _this.text(atlasKey, url.substr(0, url.lastIndexOf('.')) + variant + '.atlas');
+                    _this.text(atlasKey, url.substr(0, url.lastIndexOf('.')) + variant + '_atlas.js');
                 });
                 this.json(key, url);
                 this.game.cache.addSpine(key, cacheData);

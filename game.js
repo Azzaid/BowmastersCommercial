@@ -7,7 +7,7 @@ var config = {
   spriteScale: 0.5,
   zoomLevel:1,
   groundLevel: 1900,
-  groundThickness: 200,
+  groundThickness: 97,
   characterHeight: 650,
   characterWidth: 200,
   guiPadding: 100,
@@ -40,10 +40,9 @@ if (config.height < config.characterHeight*2 / config.zoomLevel) {
 
 config.playerXposition = config.width / 4 + config.characterWidth/2;
 config.enemyXposition = config.playerXposition + config.characterWidth*20;
-config.groundThickness = Math.max(config.height - config.groundLevel*config.worldScale, config.groundThickness);
 
 config.worldWidth = config.enemyXposition + config.width/2;
-config.worldHeight = config.groundLevel + config.groundThickness;
+config.worldHeight = config.groundLevel + Math.max(config.height - config.groundLevel*config.worldScale, config.groundThickness);
 
 //Global variables in case if i will ned to move everything on other game stage.
 var enemy = 0;
