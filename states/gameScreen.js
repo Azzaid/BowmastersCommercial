@@ -205,19 +205,29 @@ var gameScreen = {
       gameScreen.mjolnirSwing = game.add.tween(playerWeapon).to({angle: -80}, 1000, 'Linear', true, 0, -1, true);
       
       gameScreen.aimLine = game.add.graphics(player.x, player.y - config.characterHeight / 2);
-      
+      gameScreen.aimLine.beginFill('0xffffff');
       for (i = 1; i < 11; i++) {
-        gameScreen.aimLine.beginFill('0xffffff');
-        gameScreen.aimLine.drawCircle(config.guiPadding + config.characterWidth * i, 0, 30 * config.spriteScale - i * 2 * config.spriteScale);
-      }
-      ;
-    }
-    ;
-  },
+        gameScreen.aimLine.drawCircle(config.characterWidth/2*i, 0, 30 * config.spriteScale - i * 2 * config.spriteScale);
+      };
+      gameScreen.aimLineAnimatorCounter = 0;
+      gameScreen.aimLineAnimator = setInterval(()=>{
+        if (gameScreen.aimLineAnimatorCounter < 1) {
+          gameScreen.aimLineAnimatorCounter += 0.05;
+        } else {
+          gameScreen.aimLineAnimatorCounter = 0;
+        };
+        gameScreen.aimLine.clear();
+        gameScreen.aimLine.beginFill(0xffffff);
+        for (i = 1; i < 11; i++) {
+          gameScreen.aimLine.drawCircle(config.characterWidth/2*(i + gameScreen.aimLineAnimatorCounter), 0, 30 * config.spriteScale - (i + gameScreen.aimLineAnimatorCounter) * 2 * config.spriteScale);
+        };
+    }, 50);
+  }},
   
   playerThrow: function () {
     if (gameScreen.playerAiming) {
       gameScreen.aimLine.destroy();
+      clearInterval(gameScreen.aimLineAnimator);
       
       gameScreen.playerAiming = false;
       gameScreen.enemyMoveInProgress = true;
